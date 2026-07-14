@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
-import { Instrument_Sans, Syne } from "next/font/google";
+import { Instrument_Sans, Syne, Geist } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const syne = Syne({
   variable: "--font-syne",
@@ -28,7 +31,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${syne.variable} ${instrumentSans.variable}`}
+      className={cn(syne.variable, instrumentSans.variable, "font-sans", geist.variable)}
     >
       <body>{children}</body>
     </html>

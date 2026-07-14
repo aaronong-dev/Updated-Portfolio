@@ -1,3 +1,5 @@
+"use client";
+
 import GridBackground from "./GridBackground";
 import styles from "./Hero.module.css";
 
