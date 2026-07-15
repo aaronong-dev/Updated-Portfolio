@@ -9,12 +9,18 @@ export default function Hero() {
   return (
     <section className={styles.hero} aria-label="Introduction">
       <GridBackground />
+      <div className={styles.backdropName} aria-hidden="true">
+        <div className={styles.backdropCopy}>
+          <p className={styles.backdropHeading}>AARON ONG</p>
+          <p className={styles.backdropTitle}>Full-Stack Developer</p>
+        </div>
+      </div>
       <div className={styles.portrait}>
         <Image
-          src="/Meee.png"
+          src="/Personal-Profile.png"
           alt="Aaron Ong"
-          width={720}
-          height={960}
+          width={1200}
+          height={800}
           priority
           className={styles.portraitImage}
         />
