@@ -10,3 +10,44 @@
       var(--bg) 100%
     );
 }
+
+.portrait {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.portraitImage {
+  width: min(42vw, 420px);
+  height: auto;
+  object-fit: contain;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 88%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 88%,
+    transparent 100%
+  );
+}
+
+.dock {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 10;
+  padding-top: 1.25rem;
+  pointer-events: none;
+}
+
+.dock > * {
+  pointer-events: auto;
+}
