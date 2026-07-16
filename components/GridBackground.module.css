@@ -3,12 +3,9 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
+  display: block;
+  pointer-events: auto;
   z-index: 0;
-  background-image: url("/grid-design.svg");
-  background-repeat: repeat;
-  background-position: center;
-  background-size: 220px 220px;
   -webkit-mask-image: radial-gradient(
     ellipse 72% 68% at 50% 50%,
     #000 0%,
@@ -23,4 +20,16 @@
     rgba(0, 0, 0, 0.55) 52%,
     transparent 78%
   );
+}
+
+@media (hover: none), (pointer: coarse) {
+  .grid {
+    pointer-events: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grid {
+    pointer-events: none;
+  }
 }

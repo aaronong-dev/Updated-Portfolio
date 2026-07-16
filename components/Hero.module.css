@@ -28,6 +28,10 @@
   pointer-events: none;
 }
 
+.hero[data-warp-ready="true"] .backdropName {
+  visibility: hidden;
+}
+
 .backdropCopy {
   display: flex;
   flex-direction: column;
@@ -85,17 +89,4 @@
     #000 88%,
     transparent 100%
   );
-}
-
-.dock {
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
-  z-index: 10;
-  padding-top: 1.25rem;
-  pointer-events: none;
-}
-
-.dock > * {
-  pointer-events: auto;
 }

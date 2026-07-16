@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, Syne, Geist } from "next/font/google";
+import Dock from "@/components/Dock";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +34,10 @@ export default function RootLayout({
       lang="en"
       className={cn(syne.variable, instrumentSans.variable, "font-sans", geist.variable)}
     >
-      <body>{children}</body>
+      <body>
+        <Dock />
+        {children}
+      </body>
     </html>
   );
 }

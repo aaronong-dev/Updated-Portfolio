@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { DockDemo } from "@/components/ui/dock-demo";
 import GridBackground from "./GridBackground";
 import styles from "./Hero.module.css";
 
@@ -11,8 +10,12 @@ export default function Hero() {
       <GridBackground />
       <div className={styles.backdropName} aria-hidden="true">
         <div className={styles.backdropCopy}>
-          <p className={styles.backdropHeading}>AARON ONG</p>
-          <p className={styles.backdropTitle}>Full-Stack Developer</p>
+          <p className={styles.backdropHeading} data-warp-heading>
+            AARON ONG
+          </p>
+          <p className={styles.backdropTitle} data-warp-title>
+            Full-Stack Developer
+          </p>
         </div>
       </div>
       <div className={styles.portrait}>
@@ -24,9 +27,6 @@ export default function Hero() {
           priority
           className={styles.portraitImage}
         />
-      </div>
-      <div className={styles.dock}>
-        <DockDemo />
       </div>
     </section>
   );
