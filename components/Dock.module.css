@@ -1,21 +1,15 @@
 .dock {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  display: flex;
-  justify-content: center;
-  padding: max(0.75rem, env(safe-area-inset-top)) 1rem 0;
-  pointer-events: none;
-}
+  --dock-inset: max(0.75rem, env(safe-area-inset-top));
+  --dock-side-inset: max(0.75rem, env(safe-area-inset-left));
+  --dock-bottom-inset: max(0.75rem, env(safe-area-inset-bottom));
+  --dock-right-inset: max(0.75rem, env(safe-area-inset-right));
 
-.tray {
+  position: fixed;
+  box-sizing: border-box;
+  z-index: 50;
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  list-style: none;
-  margin: 0;
   padding: 0.45rem 0.7rem;
   border-radius: 1.35rem;
   border: 1px solid rgba(16, 24, 32, 0.35);
@@ -26,6 +20,121 @@
     0 8px 28px rgba(16, 24, 32, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.45);
   pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+}
+
+.edgeTop {
+  top: var(--dock-inset);
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: row;
+}
+
+.edgeBottom {
+  bottom: var(--dock-bottom-inset);
+  left: 50%;
+  top: auto;
+  transform: translateX(-50%);
+  flex-direction: row;
+}
+
+.edgeLeft {
+  top: 50%;
+  left: var(--dock-side-inset);
+  transform: translateY(-50%);
+  flex-direction: column;
+}
+
+.edgeRight {
+  top: 50%;
+  right: var(--dock-right-inset);
+  left: auto;
+  transform: translateY(-50%);
+  flex-direction: column;
+}
+
+.horizontal {
+  flex-direction: row;
+}
+
+.vertical {
+  flex-direction: column;
+  padding: 0.7rem 0.45rem;
+}
+
+.dragging {
+  cursor: grabbing;
+  transition: none;
+  box-shadow:
+    0 14px 36px rgba(16, 24, 32, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.moveHandle {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  padding: 0;
+  border: none;
+  border-radius: 0.55rem;
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.92);
+  opacity: 0;
+  cursor: grab;
+  transition:
+    opacity 160ms var(--ease-out),
+    background-color 160ms var(--ease-out),
+    transform 160ms var(--ease-out);
+}
+
+.moveIcon {
+  width: 0.95rem;
+  height: 0.95rem;
+  pointer-events: none;
+}
+
+.dock:hover .moveHandle,
+.dock:focus-within .moveHandle,
+.moveHandle:focus-visible,
+.dragging .moveHandle {
+  opacity: 1;
+}
+
+.moveHandle:hover,
+.moveHandle:focus-visible {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.moveHandle:active,
+.dragging .moveHandle {
+  cursor: grabbing;
+  transform: scale(0.96);
+}
+
+.moveHandle:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 2px;
+}
+
+.tray {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.horizontal .tray {
+  flex-direction: row;
+}
+
+.vertical .tray {
+  flex-direction: column;
 }
 
 .item {
@@ -47,6 +156,15 @@
   cursor: default;
   transform-origin: center bottom;
   transition: transform 180ms var(--ease-out);
+}
+
+.edgeBottom .button {
+  transform-origin: center top;
+}
+
+.edgeLeft .button,
+.edgeRight .button {
+  transform-origin: center center;
 }
 
 .icon {
@@ -95,16 +213,95 @@
   transform: translateX(-50%);
 }
 
+.edgeBottom .tooltip {
+  top: auto;
+  bottom: calc(100% + 0.65rem);
+  transform: translateX(-50%) translateY(0.15rem);
+}
+
+.edgeBottom .tooltip::before {
+  top: 100%;
+  bottom: auto;
+  border-top: 0.4rem solid rgba(71, 76, 82, 0.96);
+  border-right: 0.45rem solid transparent;
+  border-bottom: none;
+  border-left: 0.45rem solid transparent;
+}
+
+.edgeLeft .tooltip {
+  top: 50%;
+  left: calc(100% + 0.65rem);
+  transform: translateY(-50%) translateX(-0.15rem);
+}
+
+.edgeLeft .tooltip::before {
+  top: 50%;
+  bottom: auto;
+  left: auto;
+  right: 100%;
+  border-top: 0.45rem solid transparent;
+  border-right: 0.4rem solid rgba(71, 76, 82, 0.96);
+  border-bottom: 0.45rem solid transparent;
+  border-left: none;
+  transform: translateY(-50%);
+}
+
+.edgeRight .tooltip {
+  top: 50%;
+  left: auto;
+  right: calc(100% + 0.65rem);
+  transform: translateY(-50%) translateX(0.15rem);
+}
+
+.edgeRight .tooltip::before {
+  top: 50%;
+  bottom: auto;
+  left: 100%;
+  right: auto;
+  border-top: 0.45rem solid transparent;
+  border-right: none;
+  border-bottom: 0.45rem solid transparent;
+  border-left: 0.4rem solid rgba(71, 76, 82, 0.96);
+  transform: translateY(-50%);
+}
+
 @media (hover: hover) and (pointer: fine) {
   .button:hover .icon,
   .button:focus-visible .icon {
     transform: scale(1.22) translateY(-0.15rem);
   }
 
+  .edgeBottom .button:hover .icon,
+  .edgeBottom .button:focus-visible .icon {
+    transform: scale(1.22) translateY(0.15rem);
+  }
+
+  .edgeLeft .button:hover .icon,
+  .edgeLeft .button:focus-visible .icon,
+  .edgeRight .button:hover .icon,
+  .edgeRight .button:focus-visible .icon {
+    transform: scale(1.22);
+  }
+
   .button:hover .tooltip,
   .button:focus-visible .tooltip {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+  }
+
+  .edgeBottom .button:hover .tooltip,
+  .edgeBottom .button:focus-visible .tooltip {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .edgeLeft .button:hover .tooltip,
+  .edgeLeft .button:focus-visible .tooltip {
+    transform: translateY(-50%) translateX(0);
+  }
+
+  .edgeRight .button:hover .tooltip,
+  .edgeRight .button:focus-visible .tooltip {
+    transform: translateY(-50%) translateX(0);
   }
 }
 
@@ -114,11 +311,30 @@
   border-radius: 0.85rem;
 }
 
+.dragging .button,
+.dragging .tooltip {
+  pointer-events: none;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .moveHandle {
+    opacity: 0.85;
+  }
+}
+
 @media (max-width: 480px) {
-  .tray {
+  .dock {
     gap: 0.2rem;
     padding: 0.35rem 0.5rem;
     border-radius: 1.1rem;
+  }
+
+  .vertical {
+    padding: 0.5rem 0.35rem;
+  }
+
+  .tray {
+    gap: 0.2rem;
   }
 
   .button {
@@ -131,12 +347,25 @@
     height: 2.2rem;
     border-radius: 0.55rem;
   }
+
+  .moveHandle {
+    width: 1.4rem;
+    height: 1.4rem;
+    opacity: 0.85;
+  }
+
+  .moveIcon {
+    width: 0.85rem;
+    height: 0.85rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .dock,
   .button,
   .icon,
-  .tooltip {
+  .tooltip,
+  .moveHandle {
     transition: none;
   }
 
