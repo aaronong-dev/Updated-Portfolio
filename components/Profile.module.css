@@ -1,0 +1,445 @@
+.profile {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  min-height: 100svh;
+  padding-top: clamp(2rem, 5vw, 4rem);
+  padding-bottom: clamp(2rem, 5vw, 4rem);
+  overflow: visible;
+  border-top: 0.75rem solid #fff;
+  background:
+    radial-gradient(circle at 80% 20%, rgba(213, 221, 230, 0.55), transparent 38%),
+    linear-gradient(160deg, #fff 0%, #f5f7fa 58%, #edf1f5 100%);
+}
+
+.collage {
+  position: relative;
+  flex-shrink: 0;
+  width: min(58vw, 40rem);
+  margin-top: clamp(5.5rem, 4vh, 3rem);
+  margin-left: clamp(2rem, 2vw, 5.5rem);
+  isolation: isolate;
+  cursor: default;
+}
+
+.stickers {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+.sticker {
+  --sticker-x: 0%;
+  --sticker-y: 0%;
+  --sticker-rot: 0deg;
+  --sticker-scale: 0.72;
+  --pop-x: 0%;
+  --pop-y: 0%;
+  --pop-rot: 0deg;
+  --pop-scale: 1;
+  --pop-delay: 0ms;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--sticker-w, 42%);
+  margin: 0;
+  transform:
+    translate(-50%, -50%)
+    translate(var(--sticker-x), var(--sticker-y))
+    rotate(var(--sticker-rot))
+    scale(var(--sticker-scale));
+  transform-origin: center center;
+  transition:
+    transform 520ms var(--ease-out) var(--pop-delay),
+    filter 520ms var(--ease-out) var(--pop-delay);
+  filter: drop-shadow(0 0.4rem 0.75rem rgba(16, 24, 32, 0.12));
+  will-change: transform;
+}
+
+.stickerImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+}
+
+.stickerUltrawide {
+  --sticker-w: 58%;
+  --sticker-x: -34%;
+  --sticker-y: -28%;
+  --sticker-rot: -12deg;
+  --sticker-scale: 0.58;
+  --pop-x: -48%;
+  --pop-y: -50%;
+  --pop-rot: -18deg;
+  --pop-scale: 0.78;
+  --pop-delay: 0ms;
+}
+
+.stickerMacbook {
+  --sticker-w: 54%;
+  --sticker-x: 28%;
+  --sticker-y: -22%;
+  --sticker-rot: 12deg;
+  --sticker-scale: 0.56;
+  --pop-x: 42%;
+  --pop-y: -46%;
+  --pop-rot: 18deg;
+  --pop-scale: 0.76;
+  --pop-delay: 45ms;
+}
+
+.stickerIpad {
+  --sticker-w: 28%;
+  --sticker-x: 60%;
+  --sticker-y: 22%;
+  --sticker-rot: 8deg;
+  --sticker-scale: 0.62;
+  --pop-x: 58%;
+  --pop-y: 20%;
+  --pop-rot: 14deg;
+  --pop-scale: 0.8;
+  --pop-delay: 90ms;
+}
+
+.stickerHeadphones {
+  --sticker-w: 30%;
+  --sticker-x: -55%;
+  --sticker-y: 10%;
+  --sticker-rot: -14deg;
+  --sticker-scale: 0.6;
+  --pop-x: -76%;
+  --pop-y: 5%;
+  --pop-rot: -22deg;
+  --pop-scale: 0.8;
+  --pop-delay: 60ms;
+}
+
+.stickerKeyboard {
+  --sticker-w: 48%;
+  --sticker-x: -10%;
+  --sticker-y: -4%;
+  --sticker-rot: 5deg;
+  --sticker-scale: 0.44;
+  --pop-x: -12%;
+  --pop-y: -10%;
+  --pop-rot: 8deg;
+  --pop-scale: 0.54;
+  --pop-delay: 120ms;
+}
+
+.portrait {
+  position: relative;
+  z-index: 1;
+  line-height: 0;
+  user-select: none;
+}
+
+.portraitImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0.55rem 1.1rem rgba(16, 24, 32, 0.16));
+  pointer-events: none;
+  transform: translateY(0) scale(1);
+  transition:
+    transform 480ms var(--ease-out),
+    filter 480ms var(--ease-out);
+  will-change: transform;
+}
+
+.bio {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 16rem;
+  max-width: 28rem;
+  margin-right: clamp(1.5rem, 5vw, 4rem);
+  padding-block: var(--space-md);
+}
+
+.bio p {
+  margin: 0;
+  color: var(--ink);
+  font-family: "SF Pro Text", "SF Pro", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(1.15rem, 2.1vw, 1.45rem);
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  text-align: justify;
+  text-wrap: pretty;
+}
+
+.bio .greeting {
+  margin-bottom: 0.85rem;
+  font-family: "SF Pro Display", "SF Pro", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(2.75rem, 5.5vw, 4rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  text-align: left;
+}
+
+.greeting strong {
+  font-weight: 700;
+}
+
+.clients {
+  flex: 0 0 100%;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.25rem, 3vw, 2rem);
+  margin-top: clamp(2.5rem, 6vw, 5rem);
+}
+
+.clientsHeading {
+  margin: 0;
+  max-width: 36rem;
+  padding-inline: 1.25rem;
+  color: var(--ink);
+  font-family: "SF Pro Display", "SF Pro", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(1.65rem, 3.2vw, 2.35rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.deskSetup {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: calc(min(80vw, 44rem) + 7rem);
+  line-height: 0;
+  user-select: none;
+}
+
+.slideshow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.75rem, 2.5vw, 1.75rem);
+  width: 100%;
+}
+
+.slideNav {
+  position: relative;
+  z-index: 3;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: clamp(2.5rem, 5vw, 3.25rem);
+  height: clamp(2.5rem, 5vw, 3.25rem);
+  margin: 0;
+  padding: 0;
+  border: 1.5px solid rgba(16, 24, 32, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    background-color 180ms var(--ease-out),
+    border-color 180ms var(--ease-out),
+    transform 180ms var(--ease-out);
+}
+
+.slideNav svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.slideNav:hover {
+  background: #fff;
+  border-color: rgba(16, 24, 32, 0.28);
+}
+
+.slideNav:active {
+  transform: scale(0.96);
+}
+
+.slideNav:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.monitor {
+  position: relative;
+  z-index: 1;
+  flex: 0 1 auto;
+  width: min(80vw, 44rem);
+}
+
+.keyboardImage {
+  position: relative;
+  z-index: 2;
+  width: min(56vw, 30.8rem);
+  height: auto;
+  display: block;
+  margin-top: -18%;
+  pointer-events: none;
+  mix-blend-mode: lighten;
+}
+
+.monitorScreen {
+  position: absolute;
+  top: 10.38%;
+  left: 10.26%;
+  z-index: 3;
+  width: 79.48%;
+  height: 55.74%;
+  overflow: hidden;
+  border-radius: 0.15%;
+}
+
+.monitorScreenImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center top;
+  animation: screenFade 380ms var(--ease-out);
+}
+
+@keyframes screenFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.monitorImage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+  filter: drop-shadow(0 1rem 2rem rgba(16, 24, 32, 0.18));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .collage:hover .sticker,
+  .collage:focus-within .sticker {
+    transform:
+      translate(-50%, -50%)
+      translate(var(--pop-x), var(--pop-y))
+      rotate(var(--pop-rot))
+      scale(var(--pop-scale));
+    filter: drop-shadow(0 0.85rem 1.35rem rgba(16, 24, 32, 0.2));
+  }
+
+  .collage:hover .portraitImage,
+  .collage:focus-within .portraitImage {
+    transform: translateY(-0.55rem) scale(1.025);
+    filter: drop-shadow(0 0.85rem 1.45rem rgba(16, 24, 32, 0.2));
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .stickerUltrawide {
+    --sticker-x: -34%;
+    --sticker-y: -36%;
+    --sticker-scale: 0.68;
+  }
+
+  .stickerMacbook {
+    --sticker-x: 38%;
+    --sticker-y: -32%;
+    --sticker-scale: 0.66;
+  }
+
+  .stickerIpad {
+    --sticker-x: 42%;
+    --sticker-y: 16%;
+    --sticker-scale: 0.7;
+  }
+
+  .stickerHeadphones {
+    --sticker-x: -40%;
+    --sticker-y: 12%;
+    --sticker-scale: 0.68;
+  }
+
+  .stickerKeyboard {
+    --sticker-x: 8%;
+    --sticker-y: 38%;
+    --sticker-scale: 0.64;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sticker,
+  .portraitImage {
+    transition: none;
+  }
+
+  .monitorScreenImage {
+    animation: none;
+  }
+
+  .slideNav {
+    transition: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .profile {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    padding-bottom: 3rem;
+  }
+
+  .collage {
+    width: min(90vw, 28rem);
+    margin-inline: auto;
+  }
+
+  .bio {
+    max-width: 22rem;
+    margin-inline: auto;
+    margin-right: auto;
+    padding-inline: 1.25rem;
+  }
+
+  .bio .greeting {
+    text-align: center;
+  }
+
+  .clients {
+    margin-top: clamp(2rem, 8vw, 3.5rem);
+  }
+
+  .deskSetup {
+    max-width: 100%;
+    padding-inline: 0.5rem;
+  }
+
+  .slideshow {
+    gap: 0.5rem;
+  }
+
+  .monitor {
+    width: min(78vw, 30rem);
+  }
+
+  .keyboardImage {
+    width: min(54.6vw, 21.6rem);
+  }
+}

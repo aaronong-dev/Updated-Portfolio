@@ -1,15 +1,254 @@
 .hero {
   position: relative;
-  min-height: 100svh;
+  min-height: 88svh;
   overflow: hidden;
   container-type: inline-size;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
   background:
     linear-gradient(
       160deg,
-      var(--bg) 0%,
-      var(--bg-deep) 55%,
-      var(--bg) 100%
+      #1a2a45 0%,
+      #0f1c33 55%,
+      #15253f 100%
     );
+}
+
+.hero.dragging {
+  cursor: grabbing;
+}
+
+.texture {
+  position: absolute;
+  inset: -1400px;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: soft-light;
+  background-image: url("/Hero-Overlay.jpg");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: center;
+  will-change: transform;
+}
+
+.world {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(92vw, 920px);
+  height: min(72svh, 560px);
+  transform: translateY(-2vh);
+}
+
+.title {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.name {
+  margin: 0;
+  color: #f2f5f9;
+  font-family: var(--font-serif);
+  font-size: clamp(2.75rem, 9vw, 6.5rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+.role {
+  margin: 0.85rem 0 0;
+  color: rgba(242, 245, 249, 0.72);
+  font-family: var(--font-body);
+  font-size: clamp(0.8125rem, 1.6vw, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.polaroids {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.polaroid {
+  --polaroid-x: 0%;
+  --polaroid-y: 0%;
+  --polaroid-rot: 0deg;
+  --drag-x: 0px;
+  --drag-y: 0px;
+  --drag-rot: 0deg;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(7.5rem, 16vw, 11.5rem);
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+  transform:
+    translate(-50%, -50%)
+    translate(var(--polaroid-x), var(--polaroid-y))
+    translate(var(--drag-x), var(--drag-y))
+    rotate(calc(var(--polaroid-rot) + var(--drag-rot)));
+  filter: drop-shadow(0 10px 18px rgba(16, 24, 32, 0.14));
+  transition: filter 0.28s var(--ease-out);
+}
+
+.polaroidDragging {
+  cursor: grabbing;
+  filter: drop-shadow(0 18px 32px rgba(16, 24, 32, 0.24));
+  transition: none;
+}
+
+.polaroidFrame {
+  display: flex;
+  flex-direction: column;
+  padding: 0.55rem 0.55rem 1.35rem;
+  background: #f6f3ec;
+  border: 1px solid rgba(16, 24, 32, 0.06);
+  transform: scale(1);
+  transform-origin: center center;
+  transition: transform 0.28s var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .polaroid:hover:not(.polaroidDragging) {
+    filter: drop-shadow(0 16px 26px rgba(16, 24, 32, 0.2));
+  }
+
+  .polaroid:hover:not(.polaroidDragging) .polaroidFrame {
+    transform: scale(1.07);
+  }
+}
+
+.polaroidDragging .polaroidFrame {
+  transform: scale(1.1);
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .polaroid,
+  .polaroidFrame {
+    transition: none;
+  }
+}
+
+.polaroidPhoto {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--bg-deep) 70%, #c8d0d8) 0%,
+      color-mix(in srgb, var(--bg) 55%, #b7c0c9) 100%
+    );
+}
+
+.polaroidMedia {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.polaroidOne {
+  --polaroid-x: -142%;
+  --polaroid-y: -96%;
+  --polaroid-rot: -11deg;
+}
+
+.polaroidTwo {
+  --polaroid-x: 146%;
+  --polaroid-y: -80%;
+  --polaroid-rot: 8deg;
+}
+
+.polaroidThree {
+  --polaroid-x: -132%;
+  --polaroid-y: 90%;
+  --polaroid-rot: 14deg;
+}
+
+.polaroidFour {
+  --polaroid-x: 152%;
+  --polaroid-y: 96%;
+  --polaroid-rot: -7deg;
+}
+
+.polaroidFive {
+  --polaroid-x: 12%;
+  --polaroid-y: -100%;
+  --polaroid-rot: 5deg;
+}
+
+.polaroidFive .polaroidMedia {
+  object-position: 32% 48%;
+}
+
+@media (max-width: 720px) {
+  .stage {
+    width: min(94vw, 420px);
+    height: min(58svh, 420px);
+  }
+
+  .polaroid {
+    width: clamp(5.75rem, 28vw, 7.75rem);
+  }
+
+  .polaroidOne {
+    --polaroid-x: -96%;
+    --polaroid-y: -108%;
+  }
+
+  .polaroidTwo {
+    --polaroid-x: 100%;
+    --polaroid-y: -92%;
+  }
+
+  .polaroidThree {
+    --polaroid-x: -92%;
+    --polaroid-y: 104%;
+  }
+
+  .polaroidFour {
+    --polaroid-x: 104%;
+    --polaroid-y: 110%;
+  }
+
+  .polaroidFive {
+    --polaroid-x: 4%;
+    --polaroid-y: -100%;
+  }
 }
 
 .portrait {

@@ -19,12 +19,12 @@ const DOCK_ITEMS = [
     src: "/docker-icons/Home-Button.png",
   },
   {
-    label: "Projects",
-    src: "/docker-icons/Folder-Icon.png",
-  },
-  {
     label: "Profile",
     src: "/docker-icons/Profile-Icon.png",
+  },
+  {
+    label: "Projects",
+    src: "/docker-icons/Folder-Icon.png",
   },
   {
     label: "LinkedIn",
@@ -47,7 +47,7 @@ const EDGE_CHANGE_EVENT = "portfolio-dock-edge-change";
 const EDGE_PADDING = 12;
 const MIN_VISIBLE = 48;
 const SIDE_ZONE = 140;
-const DEFAULT_EDGE: DockEdge = "top";
+const DEFAULT_EDGE: DockEdge = "left";
 
 type DragState = {
   pointerId: number;

@@ -1,0 +1,10 @@
+.projects {
+  position: relative;
+  min-height: 100svh;
+  padding-top: clamp(2rem, 5vw, 4rem);
+  padding-bottom: clamp(2rem, 5vw, 4rem);
+  border-top: 0.75rem solid #fff;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(213, 221, 230, 0.45), transparent 40%),
+    linear-gradient(160deg, #f5f7fa 0%, #edf1f5 55%, #e8ecf1 100%);
+}

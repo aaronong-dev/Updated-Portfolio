@@ -4,32 +4,6 @@
   width: 100%;
   height: 100%;
   display: block;
-  pointer-events: auto;
+  pointer-events: none;
   z-index: 0;
-  -webkit-mask-image: radial-gradient(
-    ellipse 72% 68% at 50% 50%,
-    #000 0%,
-    #000 28%,
-    rgba(0, 0, 0, 0.55) 52%,
-    transparent 78%
-  );
-  mask-image: radial-gradient(
-    ellipse 72% 68% at 50% 50%,
-    #000 0%,
-    #000 28%,
-    rgba(0, 0, 0, 0.55) 52%,
-    transparent 78%
-  );
-}
-
-@media (hover: none), (pointer: coarse) {
-  .grid {
-    pointer-events: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .grid {
-    pointer-events: none;
-  }
 }
