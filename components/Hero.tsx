@@ -16,6 +16,7 @@ import styles from "./Hero.module.css";
 const FRICTION = 0.92;
 const MIN_VELOCITY = 0.08;
 const MAX_PAN = 1400;
+const DRAG_LEAN = 0.14;
 
 const POLAROIDS = [
   {
@@ -69,13 +70,15 @@ type PolaroidDragState = {
   pointerId: number;
   lastX: number;
   lastY: number;
+  startX: number;
+  startRot: number;
 };
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
-function emptyOffsets(): Record<
+function emptyPositions(): Record<
   PolaroidId,
   { x: number; y: number; rot: number }
 > {
@@ -96,7 +99,7 @@ export default function Hero() {
   const velocityRef = useRef({ x: 0, y: 0 });
   const canvasDragRef = useRef<CanvasDragState | null>(null);
   const polaroidDragRef = useRef<PolaroidDragState | null>(null);
-  const polaroidOffsetsRef = useRef(emptyOffsets());
+  const polaroidPositionsRef = useRef(emptyPositions());
   const polaroidNodesRef = useRef<Partial<Record<PolaroidId, HTMLElement>>>({});
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const zCounterRef = useRef(5);
@@ -105,6 +108,8 @@ export default function Hero() {
   const [draggingPolaroid, setDraggingPolaroid] = useState<PolaroidId | null>(
     null,
   );
+  // Bumps on drop so React re-renders with the committed drag position
+  const [positionVersion, setPositionVersion] = useState(0);
   const [zOrders, setZOrders] = useState<Record<PolaroidId, number>>({
     one: 1,
     two: 2,
@@ -112,6 +117,19 @@ export default function Hero() {
     four: 4,
     five: 5,
   });
+
+  const applyPolaroidTransform = (
+    id: PolaroidId,
+    x: number,
+    y: number,
+    rot: number,
+  ) => {
+    const node = polaroidNodesRef.current[id];
+    if (!node) return;
+    node.style.setProperty("--drag-x", `${x}px`);
+    node.style.setProperty("--drag-y", `${y}px`);
+    node.style.setProperty("--drag-rot", `${rot}deg`);
+  };
 
   const applyPan = (x: number, y: number) => {
     const next = {
@@ -235,60 +253,64 @@ export default function Hero() {
       canvasDragRef.current = null;
       setIsPanning(false);
 
+      const saved = polaroidPositionsRef.current[id];
       polaroidDragRef.current = {
         id,
         pointerId: event.pointerId,
         lastX: event.clientX,
         lastY: event.clientY,
+        startX: event.clientX,
+        startRot: saved.rot,
       };
       event.currentTarget.setPointerCapture(event.pointerId);
-      setDraggingPolaroid(id);
 
-      // Nudge orientation when the card is picked up
-      const offset = polaroidOffsetsRef.current[id];
-      const nudge = (Math.random() * 10 + 4) * (Math.random() < 0.5 ? -1 : 1);
-      offset.rot = clamp(offset.rot + nudge, -28, 28);
-      event.currentTarget.style.setProperty("--drag-rot", `${offset.rot}deg`);
+      // Keep saved position and orientation while lifting
+      applyPolaroidTransform(id, saved.x, saved.y, saved.rot);
 
       zCounterRef.current += 1;
       const nextZ = zCounterRef.current;
       setZOrders((orders) => ({ ...orders, [id]: nextZ }));
+      setDraggingPolaroid(id);
+
+      const onPointerMove = (moveEvent: PointerEvent) => {
+        const drag = polaroidDragRef.current;
+        if (!drag || drag.pointerId !== moveEvent.pointerId) return;
+
+        const dx = moveEvent.clientX - drag.lastX;
+        const dy = moveEvent.clientY - drag.lastY;
+        const position = polaroidPositionsRef.current[drag.id];
+        position.x += dx;
+        position.y += dy;
+
+        const totalDx = moveEvent.clientX - drag.startX;
+        position.rot = clamp(drag.startRot + totalDx * DRAG_LEAN, -28, 28);
+        applyPolaroidTransform(drag.id, position.x, position.y, position.rot);
+
+        drag.lastX = moveEvent.clientX;
+        drag.lastY = moveEvent.clientY;
+      };
+
+      const onPointerUp = (upEvent: PointerEvent) => {
+        const drag = polaroidDragRef.current;
+        if (!drag || drag.pointerId !== upEvent.pointerId) return;
+
+        const position = polaroidPositionsRef.current[drag.id];
+        // Drop in place — keep position and orientation as-is
+        applyPolaroidTransform(drag.id, position.x, position.y, position.rot);
+
+        window.removeEventListener("pointermove", onPointerMove);
+        window.removeEventListener("pointerup", onPointerUp);
+        window.removeEventListener("pointercancel", onPointerUp);
+
+        polaroidDragRef.current = null;
+        setDraggingPolaroid(null);
+        setPositionVersion((version) => version + 1);
+      };
+
+      window.addEventListener("pointermove", onPointerMove);
+      window.addEventListener("pointerup", onPointerUp);
+      window.addEventListener("pointercancel", onPointerUp);
     };
-
-  const onPolaroidPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
-    const drag = polaroidDragRef.current;
-    if (!drag || drag.pointerId !== event.pointerId) return;
-
-    const dx = event.clientX - drag.lastX;
-    const dy = event.clientY - drag.lastY;
-    const offset = polaroidOffsetsRef.current[drag.id];
-    offset.x += dx;
-    offset.y += dy;
-    // Lean with horizontal movement while dragging
-    offset.rot = clamp(offset.rot + dx * 0.14, -28, 28);
-
-    const node = polaroidNodesRef.current[drag.id];
-    if (node) {
-      node.style.setProperty("--drag-x", `${offset.x}px`);
-      node.style.setProperty("--drag-y", `${offset.y}px`);
-      node.style.setProperty("--drag-rot", `${offset.rot}deg`);
-    }
-
-    drag.lastX = event.clientX;
-    drag.lastY = event.clientY;
-  };
-
-  const endPolaroidDrag = (event: ReactPointerEvent<HTMLElement>) => {
-    const drag = polaroidDragRef.current;
-    if (!drag || drag.pointerId !== event.pointerId) return;
-
-    polaroidDragRef.current = null;
-    setDraggingPolaroid(null);
-
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-  };
 
   const playPolaroidVideo = () => {
     const video = videoRef.current;
@@ -301,6 +323,9 @@ export default function Hero() {
     if (!video) return;
     video.pause();
   };
+
+  // Ensure render subscribes to position commits after each drop
+  void positionVersion;
 
   return (
     <section
@@ -321,10 +346,11 @@ export default function Hero() {
           <ul className={styles.polaroids}>
             {POLAROIDS.map((polaroid) => {
               const isDragging = draggingPolaroid === polaroid.id;
+              const position = polaroidPositionsRef.current[polaroid.id];
               const dragStyle = {
-                "--drag-x": `${polaroidOffsetsRef.current[polaroid.id].x}px`,
-                "--drag-y": `${polaroidOffsetsRef.current[polaroid.id].y}px`,
-                "--drag-rot": `${polaroidOffsetsRef.current[polaroid.id].rot}deg`,
+                "--drag-x": `${position.x}px`,
+                "--drag-y": `${position.y}px`,
+                "--drag-rot": `${position.rot}deg`,
                 zIndex: zOrders[polaroid.id],
               } as CSSProperties;
 
@@ -346,9 +372,6 @@ export default function Hero() {
                   style={dragStyle}
                   aria-label={polaroid.label}
                   onPointerDown={onPolaroidPointerDown(polaroid.id)}
-                  onPointerMove={onPolaroidPointerMove}
-                  onPointerUp={endPolaroidDrag}
-                  onPointerCancel={endPolaroidDrag}
                   onPointerEnter={isVideo ? playPolaroidVideo : undefined}
                   onPointerLeave={isVideo ? pausePolaroidVideo : undefined}
                 >
@@ -384,6 +407,36 @@ export default function Hero() {
           <div className={styles.title}>
             <h1 className={styles.name}>Aaron Ong</h1>
             <p className={styles.role}>Software Developer</p>
+            <nav className={styles.titleActions} aria-label="Sections">
+              <a
+                href="#profile"
+                className={styles.titleButton}
+                onPointerDown={(event) => event.stopPropagation()}
+              >
+                <Image
+                  className={styles.titleButtonImage}
+                  src="/profile-button.png"
+                  alt="Profile"
+                  width={200}
+                  height={200}
+                  draggable={false}
+                />
+              </a>
+              <a
+                href="#projects"
+                className={styles.titleButton}
+                onPointerDown={(event) => event.stopPropagation()}
+              >
+                <Image
+                  className={styles.titleButtonImage}
+                  src="/projects-button.png"
+                  alt="Projects"
+                  width={200}
+                  height={200}
+                  draggable={false}
+                />
+              </a>
+            </nav>
           </div>
         </div>
       </div>

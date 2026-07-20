@@ -61,6 +61,7 @@
 
 html {
   height: 100%;
+  scroll-behavior: smooth;
 }
 
 html,
@@ -90,6 +91,10 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {
