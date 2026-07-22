@@ -17,22 +17,29 @@ const DOCK_ITEMS = [
   {
     label: "Home",
     src: "/docker-icons/Home-Button.png",
+    href: "/#home",
   },
   {
     label: "Profile",
     src: "/docker-icons/Profile-Icon.png",
+    href: "/#profile",
   },
   {
     label: "Projects",
     src: "/docker-icons/Folder-Icon.png",
+    href: "/#projects",
   },
   {
     label: "LinkedIn",
     src: "/docker-icons/Linked-In-Icon.png",
+    href: "https://www.linkedin.com/in/aaron-ong-77b642158/",
+    external: true,
   },
   {
     label: "GitHub",
     src: "/docker-icons/GitHub-Logo.png",
+    href: "https://github.com/aaronong-dev",
+    external: true,
   },
   {
     label: "Messages",
@@ -521,9 +528,9 @@ export default function Dock() {
       </button>
 
       <ul className={styles.tray}>
-        {DOCK_ITEMS.map((item) => (
-          <li key={item.label} className={styles.item} data-dock-animated>
-            <button type="button" className={styles.button} aria-label={item.label}>
+        {DOCK_ITEMS.map((item) => {
+          const content = (
+            <>
               <Image
                 src={item.src}
                 alt=""
@@ -533,9 +540,30 @@ export default function Dock() {
                 draggable={false}
               />
               <span className={styles.tooltip}>{item.label}</span>
-            </button>
-          </li>
-        ))}
+            </>
+          );
+
+          return (
+            <li key={item.label} className={styles.item} data-dock-animated>
+              {"href" in item && item.href ? (
+                <a
+                  href={item.href}
+                  className={styles.button}
+                  aria-label={item.label}
+                  {...("external" in item && item.external
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
+                >
+                  {content}
+                </a>
+              ) : (
+                <button type="button" className={styles.button} aria-label={item.label}>
+                  {content}
+                </button>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );

@@ -192,6 +192,102 @@
   font-weight: 700;
 }
 
+.linkPreviewWrap {
+  position: relative;
+  display: inline;
+}
+
+.uniLink {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.uniLink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.linkPreview {
+  position: absolute;
+  bottom: calc(100% + 0.65rem);
+  left: 50%;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  width: min(18.5rem, 72vw);
+  overflow: hidden;
+  border: 1px solid rgba(16, 24, 32, 0.1);
+  border-radius: 0.85rem;
+  background: #fff;
+  box-shadow:
+    0 0.5rem 1.25rem rgba(16, 24, 32, 0.12),
+    0 0.15rem 0.35rem rgba(16, 24, 32, 0.06);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-50%) translateY(0.35rem) scale(0.97);
+  transform-origin: bottom center;
+  transition:
+    opacity 180ms var(--ease-out),
+    transform 180ms var(--ease-out);
+}
+
+.linkPreviewMedia {
+  display: block;
+  line-height: 0;
+  background: #edf1f5;
+}
+
+.linkPreviewImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  aspect-ratio: 720 / 468;
+  object-fit: cover;
+}
+
+.linkPreviewBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.7rem 0.8rem 0.8rem;
+}
+
+.linkPreviewTitle {
+  color: var(--ink);
+  font-family: "SF Pro Text", "SF Pro", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.linkPreviewDesc {
+  color: var(--ink-muted);
+  font-family: "SF Pro Text", "SF Pro", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.74rem;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.linkPreviewUrl {
+  margin-top: 0.15rem;
+  color: rgba(16, 24, 32, 0.45);
+  font-family: "SF Pro Text", "SF Pro", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .linkPreviewWrap:hover .linkPreview,
+  .linkPreviewWrap:focus-within .linkPreview {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
 .clients {
   flex: 0 0 100%;
   z-index: 1;
@@ -199,7 +295,9 @@
   flex-direction: column;
   align-items: center;
   gap: clamp(1.25rem, 3vw, 2rem);
-  margin-top: clamp(2.5rem, 6vw, 5rem);
+  margin-top: clamp(1.5rem, 4vw, 3rem);
+  padding-top: clamp(2rem, 5vw, 4rem);
+  border-top: 0.75rem solid #fff;
 }
 
 .clientsHeading {
@@ -241,14 +339,14 @@
   flex-shrink: 0;
   display: grid;
   place-items: center;
-  width: clamp(2.5rem, 5vw, 3.25rem);
-  height: clamp(2.5rem, 5vw, 3.25rem);
+  width: clamp(2.25rem, 4.5vw, 2.75rem);
+  height: clamp(2.25rem, 4.5vw, 2.75rem);
   margin: 0;
   padding: 0;
   border: 1.5px solid rgba(16, 24, 32, 0.14);
-  border-radius: 999px;
+  border-radius: 0.35rem;
   background: rgba(255, 255, 255, 0.82);
-  color: var(--ink);
+  color: rgba(16, 24, 32, 0.4);
   cursor: pointer;
   transition:
     background-color 180ms var(--ease-out),
@@ -257,8 +355,8 @@
 }
 
 .slideNav svg {
-  width: 1.15rem;
-  height: 1.15rem;
+  width: 0.45rem;
+  height: 0.55rem;
 }
 
 .slideNav:hover {
@@ -267,6 +365,9 @@
 }
 
 .slideNav:active {
+  background: rgba(220, 226, 232, 0.95);
+  border-color: rgba(16, 24, 32, 0.22);
+  color: rgba(16, 24, 32, 0.55);
   transform: scale(0.96);
 }
 
@@ -302,6 +403,29 @@
   height: 55.74%;
   overflow: hidden;
   border-radius: 0.15%;
+}
+
+.monitorScreenLink {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.monitorScreenLink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+}
+
+.monitorScreenLink .monitorScreenImage {
+  transition: filter 220ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .monitorScreenLink:hover .monitorScreenImage,
+  .monitorScreenLink:focus-visible .monitorScreenImage {
+    filter: brightness(0.72);
+  }
 }
 
 .monitorScreenImage {
@@ -384,7 +508,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .sticker,
-  .portraitImage {
+  .portraitImage,
+  .linkPreview {
     transition: none;
   }
 
@@ -423,7 +548,8 @@
   }
 
   .clients {
-    margin-top: clamp(2rem, 8vw, 3.5rem);
+    margin-top: clamp(1.25rem, 5vw, 2.5rem);
+    padding-top: clamp(1.75rem, 6vw, 3rem);
   }
 
   .deskSetup {

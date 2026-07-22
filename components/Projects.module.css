@@ -1,10 +1,348 @@
+.wrapper {
+  --projects-gutter: 0.8rem;
+}
+
+.header {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  padding: clamp(2rem, 5vw, 3.5rem) var(--projects-gutter);
+  border-top: var(--projects-gutter) solid #fff;
+  background:
+    radial-gradient(
+      ellipse 70% 120% at 50% 0%,
+      rgba(255, 255, 255, 0.85) 0%,
+      transparent 55%
+    ),
+    linear-gradient(180deg, #f7f8fa 0%, #eef1f5 48%, #e8ecf1 100%);
+  text-align: center;
+  overflow: visible;
+}
+
+.heading {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-family: "SF Pro Display", "SF Pro", -apple-system, BlinkMacSystemFont,
+    var(--font-display), sans-serif;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: #1d1d1f;
+}
+
+.subheading {
+  position: relative;
+  z-index: 1;
+  margin: 0.5rem 0 0;
+  font-family: "SF Pro Display", "SF Pro", -apple-system, BlinkMacSystemFont,
+    var(--font-display), sans-serif;
+  font-size: clamp(1.25rem, 2.75vw, 2rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: #1d1d1f;
+}
+
+.pencils {
+  position: absolute;
+  left: 50%;
+  top: calc(100% - 6.5rem);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(3.5rem, 18vw, 12rem);
+  width: 100%;
+  max-width: 40rem;
+  transform: translateX(-50%);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.pencil {
+  width: clamp(4.5rem, 14vw, 7.5rem);
+  height: auto;
+  pointer-events: auto;
+  cursor: default;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: drop-shadow(0 0.45rem 0.75rem rgba(16, 24, 32, 0.18))
+    drop-shadow(0 0.12rem 0.25rem rgba(16, 24, 32, 0.1));
+}
+
+.pencilLeft {
+  transform: rotate(45deg);
+}
+
+.pencilLeft:hover {
+  transform: rotate(38deg);
+}
+
+.pencilRight {
+  transform: scaleX(-1) rotate(45deg);
+}
+
+.pencilRight:hover {
+  transform: scaleX(-1) rotate(38deg);
+}
+
 .projects {
   position: relative;
   min-height: 100svh;
-  padding-top: clamp(2rem, 5vw, 4rem);
-  padding-bottom: clamp(2rem, 5vw, 4rem);
-  border-top: 0.75rem solid #fff;
-  background:
-    radial-gradient(circle at 20% 30%, rgba(213, 221, 230, 0.45), transparent 40%),
-    linear-gradient(160deg, #f5f7fa 0%, #edf1f5 55%, #e8ecf1 100%);
+  padding: 0 var(--projects-gutter) var(--projects-gutter);
+  border-top: var(--projects-gutter) solid #fff;
+  background: #fff;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--projects-gutter);
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  aspect-ratio: 1 / 1.05;
+  text-align: center;
+  transition: transform 0.35s ease, filter 0.35s ease;
+}
+
+.tile:hover {
+  transform: scale(1.01);
+  filter: brightness(1.02);
+}
+
+.tileLight {
+  color: #1d1d1f;
+  background: linear-gradient(180deg, #f5f5f7 0%, #e8eef5 55%, #fbfbfd 100%);
+}
+
+.tileDark {
+  color: #f5f5f7;
+  background: #000;
+}
+
+.tileHasImage {
+  justify-content: flex-start;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bgImage {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: auto;
+  bottom: 20%;
+  width: 100%;
+  height: auto;
+  transform: none;
+  user-select: none;
+}
+
+.bgGradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 28%,
+    rgba(0, 0, 0, 0.92) 42%,
+    rgba(0, 0, 0, 0.15) 48%,
+    rgba(0, 0, 0, 0.12) 72%,
+    transparent 88%
+  );
+}
+
+.copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: clamp(1.75rem, 4.5vw, 3.25rem) 1.25rem 0.75rem;
+}
+
+.label {
+  margin: 0;
+  font-family: "SF Pro Text", "SF Pro", -apple-system, BlinkMacSystemFont,
+    var(--font-body), sans-serif;
+  font-size: clamp(0.75rem, 1.1vw, 0.9rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+.title {
+  margin: 0;
+  font-family: "SF Pro Display", "SF Pro", -apple-system, BlinkMacSystemFont,
+    var(--font-display), sans-serif;
+  font-size: clamp(1.65rem, 3.2vw, 2.75rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.languages {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+  margin: 0.15rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.language {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.28rem 0.65rem;
+  border-radius: 0.35rem;
+  font-family: "SF Pro Text", "SF Pro", -apple-system, BlinkMacSystemFont,
+    var(--font-body), sans-serif;
+  font-size: clamp(0.7rem, 1vw, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.description {
+  margin: 0.15rem 0 0;
+  max-width: 22rem;
+  font-family: "SF Pro Text", "SF Pro", -apple-system, BlinkMacSystemFont,
+    var(--font-body), sans-serif;
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
+  font-weight: 400;
+  line-height: 1.4;
+  opacity: 0.82;
+}
+
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.ctaPrimary,
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.25rem;
+  padding: 0.45rem 1.15rem;
+  border-radius: 9999px;
+  font-family: "SF Pro Text", "SF Pro", -apple-system, BlinkMacSystemFont,
+    var(--font-body), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.ctaPrimary {
+  background: #0071e3;
+  color: #fff;
+}
+
+.ctaPrimary:hover {
+  background: #0077ed;
+}
+
+.ctaSecondary {
+  border: 1px solid #0071e3;
+  background: transparent;
+  color: #0071e3;
+}
+
+.ctaSecondary:hover {
+  background: rgba(0, 113, 227, 0.08);
+}
+
+.tileDark .ctaSecondary {
+  border-color: #2997ff;
+  color: #2997ff;
+}
+
+.tileDark .ctaSecondary:hover {
+  background: rgba(41, 151, 255, 0.12);
+}
+
+.art {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  padding: 0 clamp(0.75rem, 3vw, 2rem) 0;
+  pointer-events: none;
+}
+
+.artImage {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  user-select: none;
+}
+
+.artPlaceholder {
+  width: min(78%, 28rem);
+  aspect-ratio: 16 / 10;
+  margin-bottom: clamp(1.25rem, 4vw, 2.5rem);
+  border-radius: 0.75rem;
+  background: linear-gradient(
+    145deg,
+    rgba(0, 0, 0, 0.06) 0%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
+}
+
+.tileDark .artPlaceholder {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.16) 100%
+  );
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    --projects-gutter: 0.5rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tile {
+    aspect-ratio: 1 / 1.15;
+  }
+
+  .tile:hover {
+    transform: none;
+    filter: none;
+  }
 }

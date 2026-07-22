@@ -159,9 +159,15 @@
   padding: 0;
   border: none;
   background: transparent;
+  color: inherit;
+  text-decoration: none;
   cursor: default;
   transform-origin: center bottom;
   transition: transform 180ms var(--ease-out);
+}
+
+.button:active .icon {
+  filter: brightness(0.55);
 }
 
 .edgeBottom .button {
@@ -180,7 +186,9 @@
   border-radius: 0.7rem;
   user-select: none;
   pointer-events: none;
-  transition: transform 180ms var(--ease-out);
+  transition:
+    transform 180ms var(--ease-out),
+    filter 80ms ease;
 }
 
 .tooltip {

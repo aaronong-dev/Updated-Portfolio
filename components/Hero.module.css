@@ -92,7 +92,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0;
+  gap: 0.35rem;
   margin-top: 1.1rem;
   pointer-events: auto;
   transform: translateX(-50%);
@@ -102,10 +102,6 @@
   display: block;
   line-height: 0;
   transition: transform 0.25s var(--ease-out);
-}
-
-.titleButton + .titleButton {
-  margin-top: -3.75rem;
 }
 
 .titleButtonImage {

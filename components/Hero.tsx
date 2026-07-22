@@ -330,6 +330,7 @@ export default function Hero() {
   return (
     <section
       className={`${styles.hero} ${isPanning ? styles.dragging : ""}`}
+      id="home"
       onPointerDown={onCanvasPointerDown}
       onPointerMove={onCanvasPointerMove}
       onPointerUp={endCanvasDrag}
@@ -406,7 +407,7 @@ export default function Hero() {
           </ul>
           <div className={styles.title}>
             <h1 className={styles.name}>Aaron Ong</h1>
-            <p className={styles.role}>Software Developer</p>
+            <p className={styles.role}>Software Developer / Digital Creative</p>
             <nav className={styles.titleActions} aria-label="Sections">
               <a
                 href="#profile"
