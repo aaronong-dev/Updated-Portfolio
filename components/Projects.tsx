@@ -13,10 +13,11 @@ type Project = {
   title: string;
   languages: ProjectLanguage[];
   description?: string;
-  href: string;
+  href?: string;
   visitHref?: string;
   theme: "light" | "dark";
   image?: string;
+  art?: string;
 };
 
 const PROJECTS: Project[] = [
@@ -37,10 +38,12 @@ const PROJECTS: Project[] = [
   },
   {
     id: "two",
+    label: "TBA",
     title: "Project Two",
     languages: [],
-    href: "#",
+    description: "Coming soon.",
     theme: "dark",
+    art: "/WIP-Laptop.png",
   },
 ];
 
@@ -115,24 +118,39 @@ export default function Projects() {
                 {project.description ? (
                   <p className={styles.description}>{project.description}</p>
                 ) : null}
-                <div className={styles.ctas}>
-                  <a className={styles.ctaPrimary} href={project.href}>
-                    Read More
-                  </a>
-                  {project.visitHref ? (
-                    <a
-                      className={styles.ctaSecondary}
-                      href={project.visitHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Visit
-                    </a>
-                  ) : null}
-                </div>
+                {project.href || project.visitHref ? (
+                  <div className={styles.ctas}>
+                    {project.href ? (
+                      <a className={styles.ctaPrimary} href={project.href}>
+                        Learn More
+                      </a>
+                    ) : null}
+                    {project.visitHref ? (
+                      <a
+                        className={styles.ctaSecondary}
+                        href={project.visitHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Visit
+                      </a>
+                    ) : null}
+                  </div>
+                ) : null}
               </div>
 
-              {!project.image ? (
+              {project.art ? (
+                <div className={styles.art} aria-hidden="true">
+                  <Image
+                    src={project.art}
+                    alt=""
+                    width={1691}
+                    height={930}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className={styles.artImage}
+                  />
+                </div>
+              ) : !project.image ? (
                 <div className={styles.art} aria-hidden="true">
                   <div className={styles.artPlaceholder} />
                 </div>

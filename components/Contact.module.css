@@ -1,0 +1,98 @@
+.contact {
+  --contact-gutter: 0.8rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: clamp(1.25rem, 3vw, 2rem);
+  padding: clamp(2rem, 5vw, 3.5rem) var(--contact-gutter)
+    clamp(2.25rem, 5.5vw, 4rem);
+  background:
+    radial-gradient(
+      ellipse 70% 120% at 50% 0%,
+      rgba(255, 255, 255, 0.85) 0%,
+      transparent 55%
+    ),
+    linear-gradient(180deg, #f7f8fa 0%, #eef1f5 48%, #e8ecf1 100%);
+  text-align: center;
+}
+
+.heading {
+  margin: 0;
+  max-width: 22ch;
+  font-family: "SF Pro Display", "SF Pro", -apple-system, BlinkMacSystemFont,
+    var(--font-display), sans-serif;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: #1d1d1f;
+}
+
+.messageTarget {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.clickMe {
+  position: absolute;
+  z-index: 1;
+  width: clamp(16rem, 48vw, 22rem) !important;
+  max-width: none !important;
+  height: auto !important;
+  left: -230%;
+  top: -35%;
+  pointer-events: none;
+  user-select: none;
+}
+
+.messageButton {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.messageButton:hover {
+  transform: translateY(-0.35rem) scale(1.04);
+}
+
+.messageButton:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.messageIcon {
+  width: clamp(5.5rem, 16vw, 8rem);
+  height: auto;
+  border-radius: 22%;
+  filter: drop-shadow(0 0.55rem 1rem rgba(16, 24, 32, 0.18))
+    drop-shadow(0 0.15rem 0.3rem rgba(16, 24, 32, 0.1));
+  user-select: none;
+  pointer-events: none;
+  transition: filter 80ms ease;
+}
+
+.messageButton:active .messageIcon {
+  filter: brightness(0.7) drop-shadow(0 0.35rem 0.7rem rgba(16, 24, 32, 0.16));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .messageButton,
+  .messageIcon {
+    transition: none;
+  }
+
+  .messageButton:hover,
+  .messageButton:active {
+    transform: none;
+  }
+}

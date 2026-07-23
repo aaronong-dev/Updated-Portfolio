@@ -6,12 +6,10 @@
   gap: clamp(1.5rem, 4vw, 4rem);
   min-height: 100svh;
   padding-top: clamp(2rem, 5vw, 4rem);
-  padding-bottom: clamp(2rem, 5vw, 4rem);
+  padding-bottom: clamp(0.25rem, 1vw, 0.5rem);
   overflow: visible;
   border-top: 0.75rem solid #fff;
-  background:
-    radial-gradient(circle at 80% 20%, rgba(213, 221, 230, 0.55), transparent 38%),
-    linear-gradient(160deg, #fff 0%, #f5f7fa 58%, #edf1f5 100%);
+  background: linear-gradient(180deg, #fff 0%, #e8f4fc 45%, #b9dff5 100%);
 }
 
 .collage {
@@ -296,8 +294,14 @@
   align-items: center;
   gap: clamp(1.25rem, 3vw, 2rem);
   margin-top: clamp(1.5rem, 4vw, 3rem);
+  margin-bottom: calc(-1 * clamp(0.25rem, 1vw, 0.5rem));
   padding-top: clamp(2rem, 5vw, 4rem);
+  padding-bottom: clamp(2rem, 5vw, 4rem);
   border-top: 0.75rem solid #fff;
+  background:
+    radial-gradient(circle at 18% 35%, rgba(186, 220, 245, 0.45), transparent 42%),
+    radial-gradient(circle at 88% 15%, rgba(200, 228, 248, 0.4), transparent 40%),
+    linear-gradient(180deg, #eef6fc 0%, #e0f0fa 38%, #e8eef4 72%, #f7f8fa 100%);
 }
 
 .clientsHeading {
@@ -389,9 +393,19 @@
   width: min(56vw, 30.8rem);
   height: auto;
   display: block;
-  margin-top: -18%;
-  pointer-events: none;
-  mix-blend-mode: lighten;
+  margin-top: -3rem;
+  filter: drop-shadow(0 0.55rem 1.1rem rgba(16, 24, 32, 0.16));
+  transform-origin: center bottom;
+  transition:
+    transform 320ms var(--ease-out),
+    filter 320ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .keyboardImage:hover {
+    transform: rotate(-1.6deg) translateY(-0.15rem);
+    filter: drop-shadow(0 0.7rem 1.25rem rgba(16, 24, 32, 0.2));
+  }
 }
 
 .monitorScreen {
@@ -509,7 +523,8 @@
 @media (prefers-reduced-motion: reduce) {
   .sticker,
   .portraitImage,
-  .linkPreview {
+  .linkPreview,
+  .keyboardImage {
     transition: none;
   }
 
@@ -528,7 +543,7 @@
     align-items: center;
     justify-content: center;
     gap: 1.25rem;
-    padding-bottom: 3rem;
+    padding-bottom: 0.5rem;
   }
 
   .collage {

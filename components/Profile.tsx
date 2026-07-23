@@ -275,8 +275,8 @@ export default function Profile() {
           <Image
             src="/White-Keyboard.png"
             alt=""
-            width={1434}
-            height={1097}
+            width={1353}
+            height={523}
             className={styles.keyboardImage}
             draggable={false}
             aria-hidden="true"

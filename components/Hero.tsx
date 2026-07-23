@@ -74,6 +74,14 @@ type PolaroidDragState = {
   startRot: number;
 };
 
+type BannerDragState = {
+  pointerId: number;
+  lastX: number;
+  lastY: number;
+  startX: number;
+  startRot: number;
+};
+
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
@@ -99,8 +107,11 @@ export default function Hero() {
   const velocityRef = useRef({ x: 0, y: 0 });
   const canvasDragRef = useRef<CanvasDragState | null>(null);
   const polaroidDragRef = useRef<PolaroidDragState | null>(null);
+  const bannerDragRef = useRef<BannerDragState | null>(null);
   const polaroidPositionsRef = useRef(emptyPositions());
   const polaroidNodesRef = useRef<Partial<Record<PolaroidId, HTMLElement>>>({});
+  const bannerNodeRef = useRef<HTMLDivElement | null>(null);
+  const bannerPositionRef = useRef({ x: 0, y: 0, rot: 0 });
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const zCounterRef = useRef(5);
   const rafRef = useRef<number | null>(null);
@@ -108,6 +119,7 @@ export default function Hero() {
   const [draggingPolaroid, setDraggingPolaroid] = useState<PolaroidId | null>(
     null,
   );
+  const [draggingBanner, setDraggingBanner] = useState(false);
   // Bumps on drop so React re-renders with the committed drag position
   const [positionVersion, setPositionVersion] = useState(0);
   const [zOrders, setZOrders] = useState<Record<PolaroidId, number>>({
@@ -117,6 +129,7 @@ export default function Hero() {
     four: 4,
     five: 5,
   });
+  const [bannerZ, setBannerZ] = useState(0);
 
   const applyPolaroidTransform = (
     id: PolaroidId,
@@ -125,6 +138,14 @@ export default function Hero() {
     rot: number,
   ) => {
     const node = polaroidNodesRef.current[id];
+    if (!node) return;
+    node.style.setProperty("--drag-x", `${x}px`);
+    node.style.setProperty("--drag-y", `${y}px`);
+    node.style.setProperty("--drag-rot", `${rot}deg`);
+  };
+
+  const applyBannerTransform = (x: number, y: number, rot: number) => {
+    const node = bannerNodeRef.current;
     if (!node) return;
     node.style.setProperty("--drag-x", `${x}px`);
     node.style.setProperty("--drag-y", `${y}px`);
@@ -194,7 +215,7 @@ export default function Hero() {
 
   const onCanvasPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
     if (event.button !== 0) return;
-    if (polaroidDragRef.current) return;
+    if (polaroidDragRef.current || bannerDragRef.current) return;
 
     stopInertia();
     velocityRef.current = { x: 0, y: 0 };
@@ -251,7 +272,9 @@ export default function Hero() {
       stopInertia();
       velocityRef.current = { x: 0, y: 0 };
       canvasDragRef.current = null;
+      bannerDragRef.current = null;
       setIsPanning(false);
+      setDraggingBanner(false);
 
       const saved = polaroidPositionsRef.current[id];
       polaroidDragRef.current = {
@@ -312,6 +335,71 @@ export default function Hero() {
       window.addEventListener("pointercancel", onPointerUp);
     };
 
+  const onBannerPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
+    if (event.button !== 0) return;
+
+    event.stopPropagation();
+    stopInertia();
+    velocityRef.current = { x: 0, y: 0 };
+    canvasDragRef.current = null;
+    polaroidDragRef.current = null;
+    setIsPanning(false);
+    setDraggingPolaroid(null);
+
+    const saved = bannerPositionRef.current;
+    bannerDragRef.current = {
+      pointerId: event.pointerId,
+      lastX: event.clientX,
+      lastY: event.clientY,
+      startX: event.clientX,
+      startRot: saved.rot,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+    applyBannerTransform(saved.x, saved.y, saved.rot);
+
+    zCounterRef.current += 1;
+    setBannerZ(zCounterRef.current);
+    setDraggingBanner(true);
+
+    const onPointerMove = (moveEvent: PointerEvent) => {
+      const drag = bannerDragRef.current;
+      if (!drag || drag.pointerId !== moveEvent.pointerId) return;
+
+      const dx = moveEvent.clientX - drag.lastX;
+      const dy = moveEvent.clientY - drag.lastY;
+      const position = bannerPositionRef.current;
+      position.x += dx;
+      position.y += dy;
+
+      const totalDx = moveEvent.clientX - drag.startX;
+      position.rot = clamp(drag.startRot + totalDx * DRAG_LEAN, -28, 28);
+      applyBannerTransform(position.x, position.y, position.rot);
+
+      drag.lastX = moveEvent.clientX;
+      drag.lastY = moveEvent.clientY;
+    };
+
+    const onPointerUp = (upEvent: PointerEvent) => {
+      const drag = bannerDragRef.current;
+      if (!drag || drag.pointerId !== upEvent.pointerId) return;
+
+      const position = bannerPositionRef.current;
+      applyBannerTransform(position.x, position.y, position.rot);
+
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
+
+      bannerDragRef.current = null;
+      setDraggingBanner(false);
+      setPositionVersion((version) => version + 1);
+    };
+
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
+  };
+
   const playPolaroidVideo = () => {
     const video = videoRef.current;
     if (!video) return;
@@ -326,6 +414,14 @@ export default function Hero() {
 
   // Ensure render subscribes to position commits after each drop
   void positionVersion;
+
+  const bannerPosition = bannerPositionRef.current;
+  const bannerStyle = {
+    "--drag-x": `${bannerPosition.x}px`,
+    "--drag-y": `${bannerPosition.y}px`,
+    "--drag-rot": `${bannerPosition.rot}deg`,
+    zIndex: bannerZ,
+  } as CSSProperties;
 
   return (
     <section
@@ -407,7 +503,24 @@ export default function Hero() {
           </ul>
           <div className={styles.title}>
             <h1 className={styles.name}>Aaron Ong</h1>
-            <p className={styles.role}>Software Developer / Digital Creative</p>
+            <div
+              ref={bannerNodeRef}
+              className={`${styles.role} ${
+                draggingBanner ? styles.roleDragging : ""
+              }`}
+              style={bannerStyle}
+              onPointerDown={onBannerPointerDown}
+            >
+              <Image
+                className={styles.roleImage}
+                src="/Hero-Banner.png"
+                alt="Software Developer / Digital Creative"
+                width={2159}
+                height={728}
+                priority
+                draggable={false}
+              />
+            </div>
             <nav className={styles.titleActions} aria-label="Sections">
               <a
                 href="#profile"

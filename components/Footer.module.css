@@ -1,0 +1,144 @@
+.footer {
+  --footer-gutter: 0.8rem;
+  position: relative;
+  border-top: var(--footer-gutter) solid #fff;
+  background: linear-gradient(180deg, #e8ecf1 0%, #e2e7ed 100%);
+  color: #1d1d1f;
+}
+
+.inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: clamp(1.75rem, 4vw, 2.75rem) clamp(1.25rem, 4vw, 2.5rem)
+    clamp(1.5rem, 3.5vw, 2.25rem);
+}
+
+.bottom {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 clamp(1.25rem, 4vw, 2.5rem) clamp(1.5rem, 4vw, 2.25rem);
+}
+
+.divider {
+  margin: 0 0 1rem;
+  border: none;
+  border-top: 1px solid rgba(16, 24, 32, 0.12);
+}
+
+.credit {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--ink-muted);
+  text-align: center;
+}
+
+.brand {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.favicon {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.name {
+  margin: 0;
+  font-family: "SF Pro Display", "SF Pro", -apple-system, BlinkMacSystemFont,
+    var(--font-display), sans-serif;
+  font-size: clamp(1.05rem, 2vw, 1.2rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #1d1d1f;
+}
+
+.role {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--ink-muted);
+}
+
+.columns {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: clamp(1.75rem, 5vw, 3.5rem);
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+  min-width: 6.5rem;
+}
+
+.columnLabel {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.linkList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1d1d1f;
+  text-decoration: none;
+  transition: color 0.2s var(--ease-out);
+}
+
+.link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+@media (max-width: 40rem) {
+  .inner {
+    flex-direction: column;
+  }
+
+  .columns {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link {
+    transition: none;
+  }
+}
