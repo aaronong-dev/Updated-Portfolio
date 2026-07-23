@@ -360,10 +360,10 @@
   bottom: 0;
   z-index: 1;
   margin: 0;
-  padding: 2.75rem 1rem 1rem;
+  padding: 4.25rem 1.1rem 1.15rem;
   color: #fff;
   font-family: "SF Pro Display", "SF Pro", -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  font-size: clamp(1.3rem, 2.9vw, 1.85rem);
   font-weight: 600;
   line-height: 1.25;
   letter-spacing: -0.02em;
@@ -372,7 +372,8 @@
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(16, 24, 32, 0.55) 100%
+    rgba(16, 24, 32, 0.45) 40%,
+    rgba(16, 24, 32, 0.88) 100%
   );
   pointer-events: none;
 }
