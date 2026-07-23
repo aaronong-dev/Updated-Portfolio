@@ -75,24 +75,45 @@ const GALLERY_LOOP = [
 
 const SECONDARY_GALLERY_IMAGES = [
   {
-    src: "/gallery-placeholders/placeholder-1.svg",
-    label: "Placeholder 1",
-    alt: "Placeholder 1",
+    src: "/languages/Javascript-Logo.png",
+    label: "JavaScript",
+    alt: "JavaScript",
+    logo: true,
+    background:
+      "linear-gradient(160deg, #f7df1e 0%, #e8c217 42%, #c9a00c 100%)",
   },
   {
-    src: "/gallery-placeholders/placeholder-2.svg",
-    label: "Placeholder 2",
-    alt: "Placeholder 2",
+    src: "/languages/Python-Logo.webp",
+    label: "Python",
+    alt: "Python",
+    logo: true,
+    background:
+      "linear-gradient(155deg, #4584b6 0%, #2b5a87 48%, #ffd43b 100%)",
   },
   {
-    src: "/gallery-placeholders/placeholder-3.svg",
-    label: "Placeholder 3",
-    alt: "Placeholder 3",
+    src: "/languages/React-Icon.webp",
+    label: "React",
+    alt: "React",
+    logo: true,
+    background:
+      "linear-gradient(150deg, #0b1a24 0%, #163447 45%, #1b6b7a 100%)",
   },
   {
-    src: "/gallery-placeholders/placeholder-4.svg",
-    label: "Placeholder 4",
-    alt: "Placeholder 4",
+    src: "/languages/Nextjs-Logo.png",
+    label: "Next.js",
+    alt: "Next.js",
+    logo: true,
+    invertLogo: true,
+    background:
+      "linear-gradient(145deg, #2a2a2e 0%, #111113 55%, #000000 100%)",
+  },
+  {
+    src: "/languages/Cursor-Logo.png",
+    label: "Cursor",
+    alt: "Cursor",
+    logo: true,
+    background:
+      "linear-gradient(160deg, #3d2a5c 0%, #1a1228 50%, #0c0a12 100%)",
   },
 ] as const;
 
@@ -107,6 +128,9 @@ type GalleryItem = {
   label: string;
   alt: string;
   objectPosition?: string;
+  logo?: boolean;
+  invertLogo?: boolean;
+  background?: string;
 };
 
 function GalleryStrip({
@@ -148,14 +172,27 @@ function GalleryStrip({
           {loop.map((image, imageIndex) => (
             <figure
               key={`${image.src}-${imageIndex}`}
-              className={styles.gallerySlide}
+              className={`${styles.gallerySlide} ${
+                image.logo ? styles.gallerySlideLogo : ""
+              }`}
+              style={
+                image.background
+                  ? { background: image.background }
+                  : undefined
+              }
             >
               <Image
                 src={image.src}
                 alt={image.alt}
-                width={900}
-                height={1200}
-                className={styles.galleryImage}
+                width={image.logo ? 512 : 900}
+                height={image.logo ? 512 : 1200}
+                className={
+                  image.logo
+                    ? `${styles.galleryLogoImage}${
+                        image.invertLogo ? ` ${styles.galleryLogoInvert}` : ""
+                      }`
+                    : styles.galleryImage
+                }
                 style={
                   image.objectPosition
                     ? { objectPosition: image.objectPosition }
@@ -215,8 +252,13 @@ const CLIENTS = [
 export default function Profile() {
   const [activeIndex, setActiveIndex] = useState(0);
   const galleryCount = GALLERY_IMAGES.length;
+  const secondaryGalleryCount = SECONDARY_GALLERY_IMAGES.length;
   const [galleryIndex, setGalleryIndex] = useState<number>(galleryCount);
+  const [secondaryGalleryIndex, setSecondaryGalleryIndex] = useState<number>(
+    secondaryGalleryCount,
+  );
   const [galleryAnimate, setGalleryAnimate] = useState(true);
+  const [secondaryGalleryAnimate, setSecondaryGalleryAnimate] = useState(true);
   const [primaryGalleryPaused, setPrimaryGalleryPaused] = useState(false);
   const [secondaryGalleryPaused, setSecondaryGalleryPaused] = useState(false);
   const clickSoundRef = useRef<HTMLAudioElement | null>(null);
@@ -245,45 +287,82 @@ export default function Profile() {
     const timer = window.setInterval(() => {
       if (galleryPausedRef.current) return;
       setGalleryAnimate(true);
+      setSecondaryGalleryAnimate(true);
       setGalleryIndex((index) => index + 1);
+      setSecondaryGalleryIndex((index) => index + 1);
     }, 2200);
 
     return () => window.clearInterval(timer);
   }, []);
 
-  function handleGalleryTransitionEnd(event: TransitionEvent<HTMLDivElement>) {
-    if (event.propertyName !== "transform") return;
-
-    if (galleryIndex >= galleryCount * 2) {
-      setGalleryAnimate(false);
-      setGalleryIndex((index) => index - galleryCount);
-    } else if (galleryIndex < galleryCount) {
-      setGalleryAnimate(false);
-      setGalleryIndex((index) => index + galleryCount);
+  function wrapGalleryIndex({
+    index,
+    count,
+    setAnimate,
+    setIndex,
+  }: {
+    index: number;
+    count: number;
+    setAnimate: (animate: boolean) => void;
+    setIndex: (updater: (index: number) => number) => void;
+  }) {
+    if (index >= count * 2) {
+      setAnimate(false);
+      setIndex((current) => current - count);
+    } else if (index < count) {
+      setAnimate(false);
+      setIndex((current) => current + count);
     } else {
       return;
     }
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        setGalleryAnimate(true);
+        setAnimate(true);
       });
     });
   }
 
+  function handleGalleryTransitionEnd(event: TransitionEvent<HTMLDivElement>) {
+    if (event.propertyName !== "transform") return;
+    wrapGalleryIndex({
+      index: galleryIndex,
+      count: galleryCount,
+      setAnimate: setGalleryAnimate,
+      setIndex: setGalleryIndex,
+    });
+  }
+
+  function handleSecondaryGalleryTransitionEnd(
+    event: TransitionEvent<HTMLDivElement>,
+  ) {
+    if (event.propertyName !== "transform") return;
+    wrapGalleryIndex({
+      index: secondaryGalleryIndex,
+      count: secondaryGalleryCount,
+      setAnimate: setSecondaryGalleryAnimate,
+      setIndex: setSecondaryGalleryIndex,
+    });
+  }
+
   function goToGallerySlide(target: number) {
-    const current = ((galleryIndex % galleryCount) + galleryCount) % galleryCount;
+    const current =
+      ((secondaryGalleryIndex % secondaryGalleryCount) +
+        secondaryGalleryCount) %
+      secondaryGalleryCount;
     if (target === current) return;
 
-    const forward = (target - current + galleryCount) % galleryCount;
-    const backward = (current - target + galleryCount) % galleryCount;
+    const forward =
+      (target - current + secondaryGalleryCount) % secondaryGalleryCount;
+    const backward =
+      (current - target + secondaryGalleryCount) % secondaryGalleryCount;
 
-    setGalleryAnimate(true);
+    setSecondaryGalleryAnimate(true);
     // Prefer backward motion when going to an earlier slide so cards enter from the left
     if (backward < forward) {
-      setGalleryIndex(galleryIndex - backward);
+      setSecondaryGalleryIndex(secondaryGalleryIndex - backward);
     } else {
-      setGalleryIndex(galleryIndex + forward);
+      setSecondaryGalleryIndex(secondaryGalleryIndex + forward);
     }
   }
 
@@ -416,20 +495,25 @@ export default function Profile() {
         <GalleryStrip
           loop={SECONDARY_GALLERY_LOOP}
           className={styles.gallerySecondary}
-          label="Secondary gallery"
-          index={galleryIndex}
-          animate={galleryAnimate}
+          label="Technologies gallery"
+          index={secondaryGalleryIndex}
+          animate={secondaryGalleryAnimate}
           onPauseChange={setSecondaryGalleryPaused}
+          onTransitionEnd={handleSecondaryGalleryTransitionEnd}
         />
         <div
           className={styles.galleryDots}
           role="tablist"
-          aria-label="Gallery slides"
+          aria-label="Technology slides"
           onPointerEnter={() => setSecondaryGalleryPaused(true)}
           onPointerLeave={() => setSecondaryGalleryPaused(false)}
         >
           {SECONDARY_GALLERY_IMAGES.map((image, index) => {
-            const isActive = galleryIndex % galleryCount === index;
+            const isActive =
+              ((secondaryGalleryIndex % secondaryGalleryCount) +
+                secondaryGalleryCount) %
+                secondaryGalleryCount ===
+              index;
             return (
               <button
                 key={image.src}
