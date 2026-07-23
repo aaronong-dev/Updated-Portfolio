@@ -290,7 +290,7 @@ export default function Profile() {
       setSecondaryGalleryAnimate(true);
       setGalleryIndex((index) => index + 1);
       setSecondaryGalleryIndex((index) => index + 1);
-    }, 2200);
+    }, 3200);
 
     return () => window.clearInterval(timer);
   }, []);
@@ -357,11 +357,14 @@ export default function Profile() {
     const backward =
       (current - target + secondaryGalleryCount) % secondaryGalleryCount;
 
+    setGalleryAnimate(true);
     setSecondaryGalleryAnimate(true);
     // Prefer backward motion when going to an earlier slide so cards enter from the left
     if (backward < forward) {
+      setGalleryIndex(galleryIndex - backward);
       setSecondaryGalleryIndex(secondaryGalleryIndex - backward);
     } else {
+      setGalleryIndex(galleryIndex + forward);
       setSecondaryGalleryIndex(secondaryGalleryIndex + forward);
     }
   }
