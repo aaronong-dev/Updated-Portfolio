@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type TransitionEvent } from "react";
 import styles from "./Profile.module.css";
 
 const STICKERS = [
@@ -41,6 +41,33 @@ const STICKERS = [
     className: styles.stickerKeyboard,
   },
 ] as const;
+
+const GALLERY_IMAGES = [
+  {
+    src: "/services/Brand-Design.JPG",
+    label: "Brand & Visual Design",
+    alt: "Brand & Visual Design",
+  },
+  {
+    src: "/services/Software-Development.JPG",
+    label: "Software Development",
+    alt: "Software Development",
+    objectPosition: "center 75%",
+  },
+  {
+    src: "/services/Web-Development.png",
+    label: "Web Development",
+    alt: "Web Development",
+  },
+  {
+    src: "/services/Photography.jpg",
+    label: "Photography",
+    alt: "Photography",
+    objectPosition: "center 62%",
+  },
+] as const;
+
+const GALLERY_LOOP = [...GALLERY_IMAGES, ...GALLERY_IMAGES];
 
 const CLIENTS = [
   {
@@ -82,9 +109,15 @@ const CLIENTS = [
 
 export default function Profile() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [galleryIndex, setGalleryIndex] = useState(0);
+  const [galleryPaused, setGalleryPaused] = useState(false);
+  const [galleryAnimate, setGalleryAnimate] = useState(true);
   const clickSoundRef = useRef<HTMLAudioElement | null>(null);
   const previewVideoRef = useRef<HTMLVideoElement | null>(null);
+  const galleryPausedRef = useRef(galleryPaused);
   const activeClient = CLIENTS[activeIndex];
+  const galleryCount = GALLERY_IMAGES.length;
+  galleryPausedRef.current = galleryPaused;
   const screenImage = (
     <Image
       key={activeClient.src}
@@ -97,6 +130,34 @@ export default function Profile() {
       priority={activeIndex === 0}
     />
   );
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      if (galleryPausedRef.current) return;
+      setGalleryAnimate(true);
+      setGalleryIndex((index) => index + 1);
+    }, 2200);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
+  function handleGalleryTransitionEnd(event: TransitionEvent<HTMLDivElement>) {
+    if (event.propertyName !== "transform") return;
+    if (galleryIndex < galleryCount) return;
+
+    setGalleryAnimate(false);
+    setGalleryIndex((index) => index - galleryCount);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setGalleryAnimate(true);
+      });
+    });
+  }
 
   function playClickSound() {
     if (!clickSoundRef.current) {
@@ -213,6 +274,51 @@ export default function Profile() {
           tools, combining clean, responsive web development with brand-focused
           visuals and AI-powered workflows.
         </p>
+      </div>
+
+      <div
+        className={styles.gallery}
+        aria-label="Photo gallery"
+        onPointerEnter={() => setGalleryPaused(true)}
+        onPointerLeave={() => setGalleryPaused(false)}
+      >
+        <div className={styles.galleryViewport}>
+          <div
+            className={`${styles.galleryTrack} ${
+              galleryAnimate ? "" : styles.galleryTrackInstant
+            }`}
+            style={
+              {
+                "--gallery-index": String(galleryIndex),
+              } as CSSProperties
+            }
+            onTransitionEnd={handleGalleryTransitionEnd}
+          >
+            {GALLERY_LOOP.map((image, index) => (
+              <figure
+                key={`${image.src}-${index}`}
+                className={styles.gallerySlide}
+              >
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  width={900}
+                  height={1200}
+                  className={styles.galleryImage}
+                  style={
+                    "objectPosition" in image && image.objectPosition
+                      ? { objectPosition: image.objectPosition }
+                      : undefined
+                  }
+                  draggable={false}
+                />
+                <figcaption className={styles.galleryLabel}>
+                  {image.label}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className={styles.clients}>

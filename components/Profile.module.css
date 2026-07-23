@@ -286,6 +286,97 @@
   }
 }
 
+.gallery {
+  --gallery-gap: 0.75rem;
+  --gallery-index: 0;
+  --gallery-side-peek: 12cqi;
+  /* Two centered cards + equal peeks on both sides */
+  --gallery-slide: calc(
+    (100cqi - 2 * var(--gallery-side-peek) - 3 * var(--gallery-gap)) / 2
+  );
+  /* Park on cards 2–3, with 1 peeking left and 4 peeking right */
+  --gallery-base-offset: calc(var(--gallery-side-peek) - var(--gallery-slide));
+
+  position: relative;
+  flex: 0 0 100%;
+  z-index: 1;
+  height: min(48svh, 32rem);
+  margin-top: clamp(1.5rem, 4vw, 3rem);
+  margin-bottom: calc(-1 * clamp(1.5rem, 4vw, 4rem));
+  padding-bottom: 0;
+  border-top: 0.75rem solid #fff;
+  background: #fff;
+  overflow: hidden;
+}
+
+.galleryViewport {
+  container-type: inline-size;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.galleryTrack {
+  display: flex;
+  height: 100%;
+  gap: var(--gallery-gap);
+  transform: translateX(
+    calc(
+      var(--gallery-base-offset) -
+        var(--gallery-index) * (var(--gallery-slide) + var(--gallery-gap))
+    )
+  );
+  transition: transform 450ms var(--ease-out);
+  will-change: transform;
+}
+
+.galleryTrackInstant {
+  transition: none;
+}
+
+.gallerySlide {
+  position: relative;
+  flex: 0 0 var(--gallery-slide);
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.galleryImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  user-select: none;
+  pointer-events: none;
+}
+
+.galleryLabel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 2.75rem 1rem 1rem;
+  color: #fff;
+  font-family: "SF Pro Display", "SF Pro", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  text-align: left;
+  text-wrap: balance;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(16, 24, 32, 0.55) 100%
+  );
+  pointer-events: none;
+}
+
 .clients {
   flex: 0 0 100%;
   z-index: 1;
@@ -293,7 +384,7 @@
   flex-direction: column;
   align-items: center;
   gap: clamp(1.25rem, 3vw, 2rem);
-  margin-top: clamp(1.5rem, 4vw, 3rem);
+  margin-top: 0;
   margin-bottom: calc(-1 * clamp(0.25rem, 1vw, 0.5rem));
   padding-top: clamp(2rem, 5vw, 4rem);
   padding-bottom: clamp(2rem, 5vw, 4rem);
@@ -524,7 +615,8 @@
   .sticker,
   .portraitImage,
   .linkPreview,
-  .keyboardImage {
+  .keyboardImage,
+  .galleryTrack {
     transition: none;
   }
 
@@ -562,8 +654,16 @@
     text-align: center;
   }
 
-  .clients {
+  .gallery {
+    --gallery-gap: 0.5rem;
+    --gallery-side-peek: 10cqi;
+    height: min(40svh, 20rem);
     margin-top: clamp(1.25rem, 5vw, 2.5rem);
+    margin-bottom: -1.25rem;
+  }
+
+  .clients {
+    margin-top: 0;
     padding-top: clamp(1.75rem, 6vw, 3rem);
   }
 
