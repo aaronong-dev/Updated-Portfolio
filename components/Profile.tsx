@@ -67,7 +67,112 @@ const GALLERY_IMAGES = [
   },
 ] as const;
 
-const GALLERY_LOOP = [...GALLERY_IMAGES, ...GALLERY_IMAGES];
+const GALLERY_LOOP = [
+  ...GALLERY_IMAGES,
+  ...GALLERY_IMAGES,
+  ...GALLERY_IMAGES,
+];
+
+const SECONDARY_GALLERY_IMAGES = [
+  {
+    src: "/gallery-placeholders/placeholder-1.svg",
+    label: "Placeholder 1",
+    alt: "Placeholder 1",
+  },
+  {
+    src: "/gallery-placeholders/placeholder-2.svg",
+    label: "Placeholder 2",
+    alt: "Placeholder 2",
+  },
+  {
+    src: "/gallery-placeholders/placeholder-3.svg",
+    label: "Placeholder 3",
+    alt: "Placeholder 3",
+  },
+  {
+    src: "/gallery-placeholders/placeholder-4.svg",
+    label: "Placeholder 4",
+    alt: "Placeholder 4",
+  },
+] as const;
+
+const SECONDARY_GALLERY_LOOP = [
+  ...SECONDARY_GALLERY_IMAGES,
+  ...SECONDARY_GALLERY_IMAGES,
+  ...SECONDARY_GALLERY_IMAGES,
+];
+
+type GalleryItem = {
+  src: string;
+  label: string;
+  alt: string;
+  objectPosition?: string;
+};
+
+function GalleryStrip({
+  loop,
+  className,
+  label,
+  index,
+  animate,
+  onPauseChange,
+  onTransitionEnd,
+}: {
+  loop: readonly GalleryItem[];
+  className?: string;
+  label: string;
+  index: number;
+  animate: boolean;
+  onPauseChange: (paused: boolean) => void;
+  onTransitionEnd?: (event: TransitionEvent<HTMLDivElement>) => void;
+}) {
+  return (
+    <div
+      className={`${styles.gallery} ${className ?? ""}`}
+      aria-label={label}
+      onPointerEnter={() => onPauseChange(true)}
+      onPointerLeave={() => onPauseChange(false)}
+    >
+      <div className={styles.galleryViewport}>
+        <div
+          className={`${styles.galleryTrack} ${
+            animate ? "" : styles.galleryTrackInstant
+          }`}
+          style={
+            {
+              "--gallery-index": String(index),
+            } as CSSProperties
+          }
+          onTransitionEnd={onTransitionEnd}
+        >
+          {loop.map((image, imageIndex) => (
+            <figure
+              key={`${image.src}-${imageIndex}`}
+              className={styles.gallerySlide}
+            >
+              <Image
+                src={image.src}
+                alt={image.alt}
+                width={900}
+                height={1200}
+                className={styles.galleryImage}
+                style={
+                  image.objectPosition
+                    ? { objectPosition: image.objectPosition }
+                    : undefined
+                }
+                draggable={false}
+              />
+              <figcaption className={styles.galleryLabel}>
+                {image.label}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const CLIENTS = [
   {
@@ -109,15 +214,16 @@ const CLIENTS = [
 
 export default function Profile() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [galleryIndex, setGalleryIndex] = useState(0);
-  const [galleryPaused, setGalleryPaused] = useState(false);
+  const galleryCount = GALLERY_IMAGES.length;
+  const [galleryIndex, setGalleryIndex] = useState<number>(galleryCount);
   const [galleryAnimate, setGalleryAnimate] = useState(true);
+  const [primaryGalleryPaused, setPrimaryGalleryPaused] = useState(false);
+  const [secondaryGalleryPaused, setSecondaryGalleryPaused] = useState(false);
   const clickSoundRef = useRef<HTMLAudioElement | null>(null);
   const previewVideoRef = useRef<HTMLVideoElement | null>(null);
-  const galleryPausedRef = useRef(galleryPaused);
+  const galleryPausedRef = useRef(false);
   const activeClient = CLIENTS[activeIndex];
-  const galleryCount = GALLERY_IMAGES.length;
-  galleryPausedRef.current = galleryPaused;
+  galleryPausedRef.current = primaryGalleryPaused || secondaryGalleryPaused;
   const screenImage = (
     <Image
       key={activeClient.src}
@@ -147,16 +253,38 @@ export default function Profile() {
 
   function handleGalleryTransitionEnd(event: TransitionEvent<HTMLDivElement>) {
     if (event.propertyName !== "transform") return;
-    if (galleryIndex < galleryCount) return;
 
-    setGalleryAnimate(false);
-    setGalleryIndex((index) => index - galleryCount);
+    if (galleryIndex >= galleryCount * 2) {
+      setGalleryAnimate(false);
+      setGalleryIndex((index) => index - galleryCount);
+    } else if (galleryIndex < galleryCount) {
+      setGalleryAnimate(false);
+      setGalleryIndex((index) => index + galleryCount);
+    } else {
+      return;
+    }
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         setGalleryAnimate(true);
       });
     });
+  }
+
+  function goToGallerySlide(target: number) {
+    const current = ((galleryIndex % galleryCount) + galleryCount) % galleryCount;
+    if (target === current) return;
+
+    const forward = (target - current + galleryCount) % galleryCount;
+    const backward = (current - target + galleryCount) % galleryCount;
+
+    setGalleryAnimate(true);
+    // Prefer backward motion when going to an earlier slide so cards enter from the left
+    if (backward < forward) {
+      setGalleryIndex(galleryIndex - backward);
+    } else {
+      setGalleryIndex(galleryIndex + forward);
+    }
   }
 
   function playClickSound() {
@@ -276,48 +404,46 @@ export default function Profile() {
         </p>
       </div>
 
-      <div
-        className={styles.gallery}
-        aria-label="Photo gallery"
-        onPointerEnter={() => setGalleryPaused(true)}
-        onPointerLeave={() => setGalleryPaused(false)}
-      >
-        <div className={styles.galleryViewport}>
-          <div
-            className={`${styles.galleryTrack} ${
-              galleryAnimate ? "" : styles.galleryTrackInstant
-            }`}
-            style={
-              {
-                "--gallery-index": String(galleryIndex),
-              } as CSSProperties
-            }
-            onTransitionEnd={handleGalleryTransitionEnd}
-          >
-            {GALLERY_LOOP.map((image, index) => (
-              <figure
-                key={`${image.src}-${index}`}
-                className={styles.gallerySlide}
-              >
-                <Image
-                  src={image.src}
-                  alt={image.alt}
-                  width={900}
-                  height={1200}
-                  className={styles.galleryImage}
-                  style={
-                    "objectPosition" in image && image.objectPosition
-                      ? { objectPosition: image.objectPosition }
-                      : undefined
-                  }
-                  draggable={false}
-                />
-                <figcaption className={styles.galleryLabel}>
-                  {image.label}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
+      <GalleryStrip
+        loop={GALLERY_LOOP}
+        label="Services gallery"
+        index={galleryIndex}
+        animate={galleryAnimate}
+        onPauseChange={setPrimaryGalleryPaused}
+        onTransitionEnd={handleGalleryTransitionEnd}
+      />
+      <div className={styles.gallerySecondaryWrap}>
+        <GalleryStrip
+          loop={SECONDARY_GALLERY_LOOP}
+          className={styles.gallerySecondary}
+          label="Secondary gallery"
+          index={galleryIndex}
+          animate={galleryAnimate}
+          onPauseChange={setSecondaryGalleryPaused}
+        />
+        <div
+          className={styles.galleryDots}
+          role="tablist"
+          aria-label="Gallery slides"
+          onPointerEnter={() => setSecondaryGalleryPaused(true)}
+          onPointerLeave={() => setSecondaryGalleryPaused(false)}
+        >
+          {SECONDARY_GALLERY_IMAGES.map((image, index) => {
+            const isActive = galleryIndex % galleryCount === index;
+            return (
+              <button
+                key={image.src}
+                type="button"
+                role="tab"
+                className={`${styles.galleryDot} ${
+                  isActive ? styles.galleryDotActive : ""
+                }`}
+                aria-label={`Go to ${image.label}`}
+                aria-selected={isActive}
+                onClick={() => goToGallerySlide(index)}
+              />
+            );
+          })}
         </div>
       </div>
 

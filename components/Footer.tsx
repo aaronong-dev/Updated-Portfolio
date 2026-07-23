@@ -31,18 +31,13 @@ export default function Footer() {
       <div className={styles.inner}>
         <div className={styles.brand}>
           <Image
-            src="/Laptop-Favicon.png"
-            alt=""
-            width={32}
-            height={32}
-            className={styles.favicon}
+            src="/Name-Signature.png"
+            alt="Aaron Ong"
+            width={1774}
+            height={887}
+            className={styles.signature}
             unoptimized
-            aria-hidden="true"
           />
-          <div className={styles.brandText}>
-            <p className={styles.name}>Aaron Ong</p>
-            <p className={styles.role}>Software Developer</p>
-          </div>
         </div>
 
         <div className={styles.columns}>

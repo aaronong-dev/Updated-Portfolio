@@ -302,11 +302,83 @@
   z-index: 1;
   height: min(48svh, 32rem);
   margin-top: clamp(1.5rem, 4vw, 3rem);
-  margin-bottom: calc(-1 * clamp(1.5rem, 4vw, 4rem));
+  margin-bottom: 0;
   padding-bottom: 0;
   border-top: 0.75rem solid #fff;
   background: #fff;
   overflow: hidden;
+}
+
+.gallerySecondaryWrap {
+  position: relative;
+  flex: 0 0 100%;
+  z-index: 2;
+  margin-top: calc(-1 * clamp(1.5rem, 4vw, 4rem));
+  margin-bottom: calc(-1 * clamp(1.5rem, 4vw, 4rem));
+  background: #fff;
+}
+
+.gallerySecondary {
+  --gallery-gap: 0.55rem;
+  --gallery-side-peek: 20cqi;
+  /* Shift the pair a bit right vs the row above */
+  --gallery-base-offset: calc(
+    var(--gallery-side-peek) - var(--gallery-slide) + 7cqi
+  );
+
+  height: min(32svh, 21rem);
+  margin-top: 0;
+  margin-bottom: 0;
+  border-top: 0.75rem solid #fff;
+}
+
+.gallerySecondary .galleryLabel {
+  padding: 2.75rem 0.85rem 0.85rem;
+  font-size: clamp(0.95rem, 2vw, 1.25rem);
+}
+
+.galleryDots {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 2.35rem);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  transform: translateX(-50%);
+  pointer-events: auto;
+}
+
+.galleryDot {
+  width: 0.55rem;
+  height: 0.55rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(16, 24, 32, 0.22);
+  cursor: pointer;
+  transition:
+    background-color 180ms var(--ease-out),
+    transform 180ms var(--ease-out);
+}
+
+.galleryDot:hover {
+  background: rgba(16, 24, 32, 0.4);
+}
+
+.galleryDotActive {
+  background: rgba(16, 24, 32, 0.72);
+  transform: scale(1.18);
+}
+
+.galleryDot:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
 }
 
 .galleryViewport {
@@ -326,7 +398,7 @@
         var(--gallery-index) * (var(--gallery-slide) + var(--gallery-gap))
     )
   );
-  transition: transform 450ms var(--ease-out);
+  transition: transform 1200ms var(--ease-out);
   will-change: transform;
 }
 
@@ -379,6 +451,7 @@
 }
 
 .clients {
+  position: relative;
   flex: 0 0 100%;
   z-index: 1;
   display: flex;
@@ -387,8 +460,8 @@
   gap: clamp(1.25rem, 3vw, 2rem);
   margin-top: 0;
   margin-bottom: calc(-1 * clamp(0.25rem, 1vw, 0.5rem));
-  padding-top: clamp(2rem, 5vw, 4rem);
-  padding-bottom: clamp(2rem, 5vw, 4rem);
+  padding-top: clamp(4.5rem, 8vw, 6.5rem);
+  padding-bottom: 0;
   border-top: 0.75rem solid #fff;
   background:
     radial-gradient(circle at 18% 35%, rgba(186, 220, 245, 0.45), transparent 42%),
@@ -617,7 +690,8 @@
   .portraitImage,
   .linkPreview,
   .keyboardImage,
-  .galleryTrack {
+  .galleryTrack,
+  .galleryDot {
     transition: none;
   }
 
@@ -660,12 +734,29 @@
     --gallery-side-peek: 10cqi;
     height: min(40svh, 20rem);
     margin-top: clamp(1.25rem, 5vw, 2.5rem);
+    margin-bottom: 0;
+  }
+
+  .gallerySecondaryWrap {
+    margin-top: -1.25rem;
     margin-bottom: -1.25rem;
+  }
+
+  .gallerySecondary {
+    --gallery-gap: 0.4rem;
+    --gallery-side-peek: 18cqi;
+    --gallery-base-offset: calc(
+      var(--gallery-side-peek) - var(--gallery-slide) + 5cqi
+    );
+    height: min(28svh, 14rem);
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   .clients {
     margin-top: 0;
-    padding-top: clamp(1.75rem, 6vw, 3rem);
+    padding-top: clamp(4rem, 9vw, 5.25rem);
+    padding-bottom: 0;
   }
 
   .deskSetup {
