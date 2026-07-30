@@ -42,18 +42,26 @@ function statusLabel(status: DeliveryStatus) {
 export default function MessageModal() {
   const { isOpen, closeMessageModal } = useMessageModal();
   const titleId = useId();
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const windowRef = useRef<HTMLDivElement>(null);
   const threadRef = useRef<HTMLUListElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const minimizingRef = useRef(false);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const [openedAt, setOpenedAt] = useState(() => Date.now());
+  const [isMinimizing, setIsMinimizing] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
 
+    minimizingRef.current = false;
+    setIsMinimizing(false);
+    setIsExpanded(false);
     setOpenedAt(Date.now());
     setHoneypot("");
 
@@ -62,7 +70,7 @@ export default function MessageModal() {
 
     function onKeyDown(event: globalThis.KeyboardEvent) {
       if (event.key === "Escape") {
-        closeMessageModal();
+        handleClose();
       }
     }
 
@@ -74,6 +82,8 @@ export default function MessageModal() {
       window.removeEventListener("keydown", onKeyDown);
       window.clearTimeout(focusTimer);
     };
+    // handleClose is stable enough via closeMessageModal; avoid re-binding loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, closeMessageModal]);
 
   useEffect(() => {
@@ -89,11 +99,122 @@ export default function MessageModal() {
     setSubmitting(false);
     setHoneypot("");
     setOpenedAt(Date.now());
+    setIsMinimizing(false);
+    setIsExpanded(false);
+    minimizingRef.current = false;
   }
 
   function handleClose() {
+    if (minimizingRef.current) return;
     closeMessageModal();
     window.setTimeout(resetConversation, 220);
+  }
+
+  function handleExpand() {
+    if (minimizingRef.current) return;
+    setIsExpanded((current) => !current);
+  }
+
+  function getDockMessagesTarget() {
+    return (
+      document.querySelector<HTMLElement>('[aria-label="Dock"] [aria-label="Messages"]') ??
+      document.querySelector<HTMLElement>('[aria-label="Dock"]')
+    );
+  }
+
+  function handleMinimize() {
+    if (minimizingRef.current) return;
+
+    const panel = windowRef.current;
+    const backdrop = backdropRef.current;
+    if (!panel) {
+      handleClose();
+      return;
+    }
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      handleClose();
+      return;
+    }
+
+    minimizingRef.current = true;
+    setIsMinimizing(true);
+
+    const from = panel.getBoundingClientRect();
+    const target = getDockMessagesTarget();
+    const fallback = {
+      left: 16,
+      top: window.innerHeight / 2 - 24,
+      width: 48,
+      height: 48,
+    };
+    const to = target?.getBoundingClientRect() ?? fallback;
+
+    const fromX = from.left + from.width / 2;
+    const fromY = from.top + from.height / 2;
+    const toX = to.left + to.width / 2;
+    const toY = to.top + to.height / 2;
+    const dx = toX - fromX;
+    const dy = toY - fromY;
+    const scale = Math.max(0.04, Math.min(to.width / from.width, to.height / from.height) * 0.9);
+
+    const easing = "cubic-bezier(0.4, 0.0, 0.2, 1)";
+    const duration = 520;
+
+    panel.style.transformOrigin = "center center";
+
+    const panelAnimation = panel.animate(
+      [
+        {
+          transform: "translate(0px, 0px) scale(1)",
+          opacity: 1,
+          borderRadius: "0.85rem",
+          filter: "blur(0px)",
+        },
+        {
+          transform: `translate(${dx * 0.55}px, ${dy * 0.35}px) scale(${Math.max(scale * 2.4, 0.18)})`,
+          opacity: 0.92,
+          borderRadius: "1.1rem",
+          filter: "blur(0px)",
+          offset: 0.55,
+        },
+        {
+          transform: `translate(${dx}px, ${dy}px) scale(${scale})`,
+          opacity: 0,
+          borderRadius: "22%",
+          filter: "blur(1.5px)",
+        },
+      ],
+      { duration, easing, fill: "forwards" },
+    );
+
+    backdrop?.animate([{ opacity: 1 }, { opacity: 0 }], {
+      duration: duration * 0.85,
+      easing,
+      fill: "forwards",
+    });
+
+    void panelAnimation.finished
+      .catch(() => undefined)
+      .then(() => {
+        if (target) {
+          target.animate(
+            [
+              { transform: "scale(1)" },
+              { transform: "scale(1.22)" },
+              { transform: "scale(1)" },
+            ],
+            {
+              duration: 340,
+              easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+            },
+          );
+        }
+
+        minimizingRef.current = false;
+        setIsMinimizing(false);
+        closeMessageModal();
+      });
   }
 
   function updateMessageStatus(id: string, status: DeliveryStatus) {
@@ -156,9 +277,22 @@ export default function MessageModal() {
   const canSend = draft.trim().length > 0 && !submitting;
 
   return (
-    <div className={styles.backdrop} onClick={handleClose}>
+    <div
+      ref={backdropRef}
+      className={[
+        styles.backdrop,
+        isMinimizing ? styles.minimizing : "",
+        isExpanded ? styles.backdropExpanded : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      onClick={isMinimizing ? undefined : handleClose}
+    >
       <div
-        className={styles.window}
+        ref={windowRef}
+        className={[styles.window, isExpanded ? styles.windowExpanded : ""]
+          .filter(Boolean)
+          .join(" ")}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
@@ -174,15 +308,67 @@ export default function MessageModal() {
                   onClick={handleClose}
                   aria-label="Close messages"
                   title="Close"
-                />
-                <span
+                >
+                  <svg viewBox="0 0 12 12" className={styles.trafficIcon} aria-hidden="true" focusable="false">
+                    <path
+                      d="M3.2 3.2l5.6 5.6M8.8 3.2l-5.6 5.6"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
+                <button
+                  type="button"
                   className={`${styles.traffic} ${styles.trafficMinimize}`}
-                  aria-hidden="true"
-                />
-                <span
+                  onClick={handleMinimize}
+                  aria-label="Minimize messages"
+                  title="Minimize"
+                  disabled={isMinimizing}
+                >
+                  <svg viewBox="0 0 12 12" className={styles.trafficIcon} aria-hidden="true" focusable="false">
+                    <path
+                      d="M2.5 6h7"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
+                <button
+                  type="button"
                   className={`${styles.traffic} ${styles.trafficZoom}`}
-                  aria-hidden="true"
-                />
+                  onClick={handleExpand}
+                  aria-label={isExpanded ? "Exit full screen" : "Enter full screen"}
+                  title={isExpanded ? "Exit Full Screen" : "Full Screen"}
+                  disabled={isMinimizing}
+                >
+                  {isExpanded ? (
+                    <svg viewBox="0 0 12 12" className={styles.trafficIcon} aria-hidden="true" focusable="false">
+                      <path
+                        d="M7.2 2.8H9.2V4.8M4.8 9.2H2.8V7.2M9.2 2.8 6.8 5.2M2.8 9.2l2.4-2.4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 12 12" className={styles.trafficIcon} aria-hidden="true" focusable="false">
+                      <path
+                        d="M4.2 7.8H2.8V6.4M7.8 4.2h1.4V5.6M2.8 7.8l2.2-2.2M9.2 4.2 7 6.4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  )}
+                </button>
               </div>
               <span className={styles.sidebarMenu} aria-hidden="true">
                 <svg viewBox="0 0 16 16" focusable="false">
