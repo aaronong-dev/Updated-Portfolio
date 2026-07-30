@@ -249,8 +249,20 @@ const CLIENTS = [
   },
 ];
 
+/* Edit these placeholder names/urls for the "View all" modal list. */
+const ALL_CLIENTS = [
+  { name: "JK Medical Clinic", href: "https://www.jkmedicalclinic.com/" },
+  { name: "Hacienda Del Sol Resort", href: "https://www.haciendadelsolresort.com/" },
+  { name: "Medicos En Casa PLLC", href: "https://www.medicosencasapllc.com/" },
+  { name: "All Med Home Care", href: "https://www.allmedhomecare.com/" },
+  { name: "Southern Charm SPI", href: "https://www.southerncharmspi.com/" },
+  { name: "CLV Construction", href: "https://clvconstructionllc.com/" },
+  { name: "Cascos & Associates", href: "https://cascoscpa.com/" },
+];
+
 export default function Profile() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [clientsModalOpen, setClientsModalOpen] = useState(false);
   const galleryCount = GALLERY_IMAGES.length;
   const secondaryGalleryCount = SECONDARY_GALLERY_IMAGES.length;
   const [galleryIndex, setGalleryIndex] = useState<number>(galleryCount);
@@ -404,6 +416,25 @@ export default function Profile() {
     video.currentTime = 0;
   }
 
+  useEffect(() => {
+    if (!clientsModalOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setClientsModalOpen(false);
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [clientsModalOpen]);
+
   return (
     <section className={styles.profile} id="profile" aria-label="Profile">
       <div className={styles.collage}>
@@ -538,6 +569,13 @@ export default function Profile() {
         <h2 className={styles.clientsHeading}>
           Some of the clients I&apos;ve worked with
         </h2>
+        <button
+          type="button"
+          className={styles.clientsViewAll}
+          onClick={() => setClientsModalOpen(true)}
+        >
+          View all
+        </button>
 
         <div className={styles.deskSetup}>
           <div className={styles.slideshow}>
@@ -602,6 +640,58 @@ export default function Profile() {
           />
         </div>
       </div>
+
+      {clientsModalOpen ? (
+        <div
+          className={styles.clientsModalBackdrop}
+          onClick={() => setClientsModalOpen(false)}
+        >
+          <div
+            className={styles.clientsModal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="clients-modal-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className={styles.clientsModalHeader}>
+              <h3 id="clients-modal-title" className={styles.clientsModalTitle}>
+                Clients
+              </h3>
+              <button
+                type="button"
+                className={styles.clientsModalClose}
+                onClick={() => setClientsModalOpen(false)}
+                aria-label="Close clients list"
+              >
+                <svg viewBox="0 0 14 14" aria-hidden="true" focusable="false">
+                  <path
+                    d="M2 2l10 10M12 2 2 12"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <ul className={styles.clientsModalList}>
+              {ALL_CLIENTS.map((client, index) => (
+                <li key={`${client.name}-${index}`} className={styles.clientsModalItem}>
+                  <a
+                    className={styles.clientsModalLink}
+                    href={client.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {client.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
