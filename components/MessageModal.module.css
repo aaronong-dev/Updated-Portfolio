@@ -17,6 +17,7 @@
 }
 
 .window {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(14rem, 17.5rem) minmax(0, 1fr);
   width: min(100%, 56rem);
@@ -34,6 +35,96 @@
     width 320ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)),
     height 320ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1)),
     border-radius 320ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.backdropFree {
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.windowPositioned {
+  margin: 0;
+  animation: none;
+}
+
+.windowInteracting {
+  transition: none;
+  user-select: none;
+}
+
+.dragRegion {
+  cursor: grab;
+  touch-action: none;
+}
+
+.dragRegion:active {
+  cursor: grabbing;
+}
+
+.resizeHandle {
+  position: absolute;
+  z-index: 5;
+  background: transparent;
+  touch-action: none;
+}
+
+.resizeHandle[data-edge="n"],
+.resizeHandle[data-edge="s"] {
+  left: 0.95rem;
+  right: 0.95rem;
+  height: 0.6rem;
+}
+
+.resizeHandle[data-edge="e"],
+.resizeHandle[data-edge="w"] {
+  top: 0.95rem;
+  bottom: 0.95rem;
+  width: 0.6rem;
+}
+
+.resizeHandle[data-edge="n"] {
+  top: 0;
+}
+
+.resizeHandle[data-edge="s"] {
+  bottom: 0;
+}
+
+.resizeHandle[data-edge="e"] {
+  right: 0;
+}
+
+.resizeHandle[data-edge="w"] {
+  left: 0;
+}
+
+.resizeHandle[data-edge="ne"],
+.resizeHandle[data-edge="nw"],
+.resizeHandle[data-edge="se"],
+.resizeHandle[data-edge="sw"] {
+  width: 0.95rem;
+  height: 0.95rem;
+  z-index: 6;
+}
+
+.resizeHandle[data-edge="ne"] {
+  top: 0;
+  right: 0;
+}
+
+.resizeHandle[data-edge="nw"] {
+  top: 0;
+  left: 0;
+}
+
+.resizeHandle[data-edge="se"] {
+  right: 0;
+  bottom: 0;
+}
+
+.resizeHandle[data-edge="sw"] {
+  left: 0;
+  bottom: 0;
 }
 
 .backdropExpanded {

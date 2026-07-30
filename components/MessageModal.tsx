@@ -6,8 +6,10 @@ import {
   useId,
   useRef,
   useState,
+  type CSSProperties,
   type FormEvent,
   type KeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
 } from "react";
 import { useMessageModal } from "./MessageModalProvider";
 import styles from "./MessageModal.module.css";
@@ -20,6 +22,37 @@ type ChatMessage = {
   time: string;
   status: DeliveryStatus;
 };
+
+type Frame = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+type ResizeEdge = "n" | "s" | "e" | "w" | "ne" | "nw" | "se" | "sw";
+
+type Interaction =
+  | {
+      mode: "move";
+      pointerId: number;
+      offsetX: number;
+      offsetY: number;
+      origin: Frame;
+    }
+  | {
+      mode: "resize";
+      pointerId: number;
+      edge: ResizeEdge;
+      startX: number;
+      startY: number;
+      origin: Frame;
+    };
+
+const MIN_WIDTH = 340;
+const MIN_HEIGHT = 300;
+const VIEW_PADDING = 8;
+const RESIZE_EDGES: ResizeEdge[] = ["n", "s", "e", "w", "ne", "nw", "se", "sw"];
 
 function createId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
@@ -39,6 +72,67 @@ function statusLabel(status: DeliveryStatus) {
   return "Delivered";
 }
 
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function clampFrame(frame: Frame): Frame {
+  const maxWidth = Math.max(MIN_WIDTH, window.innerWidth - VIEW_PADDING * 2);
+  const maxHeight = Math.max(MIN_HEIGHT, window.innerHeight - VIEW_PADDING * 2);
+  const width = clamp(frame.width, MIN_WIDTH, maxWidth);
+  const height = clamp(frame.height, MIN_HEIGHT, maxHeight);
+  return {
+    width,
+    height,
+    x: clamp(frame.x, VIEW_PADDING, window.innerWidth - width - VIEW_PADDING),
+    y: clamp(frame.y, VIEW_PADDING, window.innerHeight - height - VIEW_PADDING),
+  };
+}
+
+function resizeCursor(edge: ResizeEdge) {
+  switch (edge) {
+    case "n":
+    case "s":
+      return "ns-resize";
+    case "e":
+    case "w":
+      return "ew-resize";
+    case "ne":
+    case "sw":
+      return "nesw-resize";
+    case "nw":
+    case "se":
+      return "nwse-resize";
+  }
+}
+
+function applyResize(origin: Frame, edge: ResizeEdge, dx: number, dy: number): Frame {
+  let { x, y, width, height } = origin;
+
+  if (edge.includes("e")) width = origin.width + dx;
+  if (edge.includes("s")) height = origin.height + dy;
+  if (edge.includes("w")) {
+    width = origin.width - dx;
+    x = origin.x + dx;
+  }
+  if (edge.includes("n")) {
+    height = origin.height - dy;
+    y = origin.y + dy;
+  }
+
+  // Keep the anchored opposite edge stable when hitting min size.
+  if (edge.includes("w") && width < MIN_WIDTH) {
+    x = origin.x + origin.width - MIN_WIDTH;
+    width = MIN_WIDTH;
+  }
+  if (edge.includes("n") && height < MIN_HEIGHT) {
+    y = origin.y + origin.height - MIN_HEIGHT;
+    height = MIN_HEIGHT;
+  }
+
+  return clampFrame({ x, y, width, height });
+}
+
 export default function MessageModal() {
   const { isOpen, closeMessageModal } = useMessageModal();
   const titleId = useId();
@@ -47,6 +141,8 @@ export default function MessageModal() {
   const threadRef = useRef<HTMLUListElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const minimizingRef = useRef(false);
+  const frameRef = useRef<Frame | null>(null);
+  const interactionRef = useRef<Interaction | null>(null);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState("");
@@ -55,6 +151,12 @@ export default function MessageModal() {
   const [openedAt, setOpenedAt] = useState(() => Date.now());
   const [isMinimizing, setIsMinimizing] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [frame, setFrame] = useState<Frame | null>(null);
+  const [isInteracting, setIsInteracting] = useState(false);
+
+  useEffect(() => {
+    frameRef.current = frame;
+  }, [frame]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -82,7 +184,6 @@ export default function MessageModal() {
       window.removeEventListener("keydown", onKeyDown);
       window.clearTimeout(focusTimer);
     };
-    // handleClose is stable enough via closeMessageModal; avoid re-binding loops
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, closeMessageModal]);
 
@@ -93,6 +194,49 @@ export default function MessageModal() {
     thread.scrollTop = thread.scrollHeight;
   }, [isOpen, messages]);
 
+  useEffect(() => {
+    function onPointerMove(event: PointerEvent) {
+      const interaction = interactionRef.current;
+      if (!interaction || event.pointerId !== interaction.pointerId) return;
+
+      if (interaction.mode === "move") {
+        const next = clampFrame({
+          ...interaction.origin,
+          x: event.clientX - interaction.offsetX,
+          y: event.clientY - interaction.offsetY,
+        });
+        frameRef.current = next;
+        setFrame(next);
+        return;
+      }
+
+      const next = applyResize(
+        interaction.origin,
+        interaction.edge,
+        event.clientX - interaction.startX,
+        event.clientY - interaction.startY,
+      );
+      frameRef.current = next;
+      setFrame(next);
+    }
+
+    function onPointerUp(event: PointerEvent) {
+      const interaction = interactionRef.current;
+      if (!interaction || event.pointerId !== interaction.pointerId) return;
+      interactionRef.current = null;
+      setIsInteracting(false);
+    }
+
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
+    };
+  }, []);
+
   function resetConversation() {
     setMessages([]);
     setDraft("");
@@ -101,6 +245,10 @@ export default function MessageModal() {
     setOpenedAt(Date.now());
     setIsMinimizing(false);
     setIsExpanded(false);
+    setFrame(null);
+    frameRef.current = null;
+    setIsInteracting(false);
+    interactionRef.current = null;
     minimizingRef.current = false;
   }
 
@@ -113,6 +261,73 @@ export default function MessageModal() {
   function handleExpand() {
     if (minimizingRef.current) return;
     setIsExpanded((current) => !current);
+  }
+
+  function captureCurrentFrame(): Frame {
+    if (frameRef.current && !isExpanded) {
+      return frameRef.current;
+    }
+
+    const panel = windowRef.current;
+    if (!panel) {
+      return clampFrame({
+        x: VIEW_PADDING,
+        y: VIEW_PADDING,
+        width: Math.min(560, window.innerWidth - VIEW_PADDING * 2),
+        height: Math.min(600, window.innerHeight - VIEW_PADDING * 2),
+      });
+    }
+
+    const rect = panel.getBoundingClientRect();
+    const next = clampFrame({
+      x: rect.left,
+      y: rect.top,
+      width: rect.width,
+      height: rect.height,
+    });
+    frameRef.current = next;
+    setFrame(next);
+    return next;
+  }
+
+  function beginMove(event: ReactPointerEvent<HTMLElement>) {
+    if (event.button !== 0 || minimizingRef.current) return;
+    if ((event.target as HTMLElement).closest("button, a, input, textarea")) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (isExpanded) {
+      setIsExpanded(false);
+    }
+
+    const origin = captureCurrentFrame();
+    interactionRef.current = {
+      mode: "move",
+      pointerId: event.pointerId,
+      offsetX: event.clientX - origin.x,
+      offsetY: event.clientY - origin.y,
+      origin,
+    };
+    setIsInteracting(true);
+  }
+
+  function beginResize(edge: ResizeEdge, event: ReactPointerEvent<HTMLElement>) {
+    if (event.button !== 0 || minimizingRef.current || isExpanded) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const origin = captureCurrentFrame();
+    interactionRef.current = {
+      mode: "resize",
+      pointerId: event.pointerId,
+      edge,
+      startX: event.clientX,
+      startY: event.clientY,
+      origin,
+    };
+    setIsInteracting(true);
   }
 
   function getDockMessagesTarget() {
@@ -275,6 +490,19 @@ export default function MessageModal() {
   if (!isOpen) return null;
 
   const canSend = draft.trim().length > 0 && !submitting;
+  const positioned = Boolean(frame) && !isExpanded;
+
+  const windowStyle: CSSProperties | undefined = positioned
+    ? {
+        position: "fixed",
+        left: frame!.x,
+        top: frame!.y,
+        width: frame!.width,
+        height: frame!.height,
+        maxWidth: "none",
+        transition: isInteracting ? "none" : undefined,
+      }
+    : undefined;
 
   return (
     <div
@@ -283,6 +511,7 @@ export default function MessageModal() {
         styles.backdrop,
         isMinimizing ? styles.minimizing : "",
         isExpanded ? styles.backdropExpanded : "",
+        positioned ? styles.backdropFree : "",
       ]
         .filter(Boolean)
         .join(" ")}
@@ -290,9 +519,15 @@ export default function MessageModal() {
     >
       <div
         ref={windowRef}
-        className={[styles.window, isExpanded ? styles.windowExpanded : ""]
+        className={[
+          styles.window,
+          isExpanded ? styles.windowExpanded : "",
+          isInteracting ? styles.windowInteracting : "",
+          positioned ? styles.windowPositioned : "",
+        ]
           .filter(Boolean)
           .join(" ")}
+        style={windowStyle}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
@@ -300,7 +535,10 @@ export default function MessageModal() {
       >
         <div className={styles.sidebarPane}>
           <aside className={styles.sidebar} aria-label="Conversations">
-            <div className={styles.sidebarTop}>
+            <div
+              className={`${styles.sidebarTop} ${styles.dragRegion}`}
+              onPointerDown={beginMove}
+            >
               <div className={styles.trafficLights}>
                 <button
                   type="button"
@@ -419,7 +657,10 @@ export default function MessageModal() {
         </div>
 
         <section className={styles.chat} aria-label="Chat with Aaron Ong">
-          <header className={styles.chatHeader}>
+          <header
+            className={`${styles.chatHeader} ${styles.dragRegion}`}
+            onPointerDown={beginMove}
+          >
             <div className={styles.toPane}>
               <Image
                 src="/Personal-Profile.png"
@@ -532,6 +773,19 @@ export default function MessageModal() {
             </div>
           </form>
         </section>
+
+        {!isExpanded
+          ? RESIZE_EDGES.map((edge) => (
+              <div
+                key={edge}
+                className={styles.resizeHandle}
+                data-edge={edge}
+                style={{ cursor: resizeCursor(edge) }}
+                onPointerDown={(event) => beginResize(edge, event)}
+                aria-hidden="true"
+              />
+            ))
+          : null}
       </div>
     </div>
   );
