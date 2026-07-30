@@ -11,6 +11,7 @@ import {
   type CSSProperties,
   type PointerEvent as ReactPointerEvent,
 } from "react";
+import { useMessageModal } from "./MessageModalProvider";
 import styles from "./Dock.module.css";
 
 const DOCK_ITEMS = [
@@ -178,6 +179,7 @@ function persistEdge(nextEdge: DockEdge) {
 }
 
 export default function Dock() {
+  const { openMessageModal } = useMessageModal();
   const dockRef = useRef<HTMLElement>(null);
   const dragRef = useRef<DragState | null>(null);
   const snapSnapshotRef = useRef<SnapSnapshot | null>(null);
@@ -304,8 +306,9 @@ export default function Dock() {
       finalRect: child.getBoundingClientRect(),
     }));
 
+    const animationDuration = 320;
     const animationOptions: KeyframeAnimationOptions = {
-      duration: 320,
+      duration: animationDuration,
       easing: "cubic-bezier(0.22, 1, 0.36, 1)",
       fill: "none",
     };
@@ -406,7 +409,7 @@ export default function Dock() {
       }
     }
 
-    const timeoutId = window.setTimeout(finishFlip, animationOptions.duration + 64);
+    const timeoutId = window.setTimeout(finishFlip, animationDuration + 64);
     void Promise.all(animations.map((animation) => animation.finished.catch(() => undefined))).then(
       () => {
         window.clearTimeout(timeoutId);
@@ -557,7 +560,12 @@ export default function Dock() {
                   {content}
                 </a>
               ) : (
-                <button type="button" className={styles.button} aria-label={item.label}>
+                <button
+                  type="button"
+                  className={styles.button}
+                  aria-label={item.label}
+                  onClick={item.label === "Messages" ? openMessageModal : undefined}
+                >
                   {content}
                 </button>
               )}

@@ -1,0 +1,555 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: fadeIn 220ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.window {
+  display: grid;
+  grid-template-columns: minmax(14rem, 17.5rem) minmax(0, 1fr);
+  width: min(100%, 56rem);
+  height: min(78vh, 38rem);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.85rem;
+  background: #1c1c1e;
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.45),
+    0 0 0 0.5px rgba(255, 255, 255, 0.06);
+  animation: sheetIn 320ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+  font-family: "SF Pro Text", "SF Pro", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.sidebarPane {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  margin: 0.55rem 0.45rem 0.55rem 0.55rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.85rem;
+  background: rgba(44, 44, 46, 0.48);
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+.sidebarTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 0.85rem 0.55rem;
+}
+
+.trafficLights {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.traffic {
+  display: block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 0;
+  border-radius: 999px;
+  padding: 0;
+}
+
+.trafficClose {
+  background: #ff5f57;
+  cursor: pointer;
+}
+
+.trafficClose:hover {
+  filter: brightness(1.08);
+}
+
+.trafficClose:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.trafficMinimize {
+  background: #febc2e;
+}
+
+.trafficZoom {
+  background: #28c840;
+}
+
+.sidebarMenu {
+  display: inline-flex;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.sidebarMenu svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0.75rem 0.75rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: 0.5rem;
+  background: rgba(0, 0, 0, 0.28);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.82rem;
+  letter-spacing: -0.01em;
+  pointer-events: none;
+  user-select: none;
+}
+
+.searchIcon {
+  width: 0.85rem;
+  height: 0.85rem;
+  flex-shrink: 0;
+}
+
+.conversation {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: calc(100% - 1rem);
+  margin: 0 0.5rem;
+  padding: 0.55rem 0.6rem;
+  border: 0;
+  border-radius: 0.65rem;
+  background: #007aff;
+  color: #fff;
+  text-align: left;
+  cursor: default;
+}
+
+.conversationAvatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.conversationBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.conversationTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.conversationName {
+  overflow: hidden;
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversationTime {
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.72rem;
+  font-weight: 400;
+}
+
+.conversationPreview {
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.78rem;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: #1c1c1e;
+}
+
+.chatHeader {
+  display: flex;
+  flex-shrink: 0;
+  padding: 0.85rem 0.55rem 0.25rem;
+  background: transparent;
+}
+
+.toPane {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  width: 100%;
+  min-width: 0;
+  padding: 0.25rem 0.9rem 0.15rem;
+  background: transparent;
+}
+
+.chatAvatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.chatName {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.28rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f5f5f7;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.headerClose {
+  appearance: none;
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+}
+
+.headerClose svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.headerClose:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.headerClose:focus-visible {
+  outline: 2px solid #0a84ff;
+  outline-offset: 2px;
+}
+
+.thread {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 1.1rem 1rem 0.85rem;
+  overflow-y: auto;
+  list-style: none;
+  scroll-behavior: smooth;
+}
+
+.bubbleRow {
+  display: flex;
+  width: 100%;
+  animation: bubbleIn 280ms var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.bubbleRowAaron {
+  justify-content: flex-start;
+}
+
+.bubbleRowVisitor {
+  justify-content: flex-end;
+}
+
+.visitorStack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.28rem;
+  width: 100%;
+}
+
+.messageTime {
+  align-self: center;
+  padding: 0.15rem 0.35rem 0.35rem;
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  text-align: center;
+}
+
+.bubble {
+  max-width: min(78%, 22rem);
+  padding: 0.55rem 0.8rem;
+  border-radius: 1.15rem;
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.bubbleAaron {
+  background: #3a3a3c;
+  color: #f5f5f7;
+  border-bottom-left-radius: 0.35rem;
+}
+
+.bubbleVisitor {
+  background: #0a84ff;
+  color: #fff;
+  border-bottom-right-radius: 0.35rem;
+}
+
+.bubbleError {
+  background: #5c1f1f;
+  color: #ffb4a9;
+  border-bottom-left-radius: 0.35rem;
+}
+
+.deliveryStatus {
+  padding: 0 0.35rem;
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.deliveryFailed {
+  color: #ff8a80;
+}
+
+.composer {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.55rem;
+  padding: 0.7rem 0.85rem calc(0.85rem + env(safe-area-inset-bottom, 0px));
+  background: #1c1c1e;
+}
+
+.honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.composerPlus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: 0.15rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.composerPlus svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.inputShell {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 0;
+  padding: 0.4rem 0.45rem 0.4rem 0.9rem;
+  border: none;
+  border-radius: 1.6rem;
+  background: rgba(58, 63, 68, 0.48);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  box-shadow:
+    inset 1px 0.7px 0 rgba(255, 255, 255, 0.15),
+    inset 2px 2px 3px -2px rgba(255, 255, 255, 0.18);
+}
+
+.input {
+  flex: 1;
+  min-height: 1.55rem;
+  max-height: 6.5rem;
+  margin: 0;
+  padding: 0.3rem 0;
+  border: 0;
+  background: transparent;
+  color: #f5f5f7;
+  font-family: inherit;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  resize: none;
+  outline: none;
+  field-sizing: content;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.send {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.85rem;
+  height: 1.85rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: #0a84ff;
+  color: #fff;
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease, opacity 160ms ease;
+}
+
+.send svg {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+.send:hover:not(:disabled) {
+  background: #0070e0;
+}
+
+.send:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.send:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.send:focus-visible {
+  outline: 2px solid #0a84ff;
+  outline-offset: 2px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sheetIn {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes bubbleIn {
+  from {
+    opacity: 0;
+    transform: translateY(0.4rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 720px) {
+  .window {
+    grid-template-columns: 1fr;
+    width: min(100%, 26rem);
+    height: min(84vh, 40rem);
+  }
+
+  .sidebarPane {
+    display: none;
+  }
+
+  .headerClose {
+    display: inline-flex;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .window,
+  .bubbleRow {
+    animation: none;
+  }
+
+  .send:active:not(:disabled) {
+    transform: none;
+  }
+}

@@ -1,7 +1,12 @@
+"use client";
+
 import Image from "next/image";
+import { useMessageModal } from "./MessageModalProvider";
 import styles from "./Contact.module.css";
 
 export default function Contact() {
+  const { openMessageModal } = useMessageModal();
+
   return (
     <section className={styles.contact} id="contact" aria-label="Contact">
       <h2 className={styles.heading}>
@@ -18,7 +23,12 @@ export default function Contact() {
           aria-hidden="true"
           unoptimized
         />
-        <button type="button" className={styles.messageButton} aria-label="Messages">
+        <button
+          type="button"
+          className={styles.messageButton}
+          aria-label="Messages"
+          onClick={openMessageModal}
+        >
           <Image
             src="/Message-Icon.png"
             alt=""
