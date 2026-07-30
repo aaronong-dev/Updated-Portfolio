@@ -317,6 +317,14 @@
     height: min(58svh, 420px);
   }
 
+  .role {
+    margin-top: -1.35rem;
+  }
+
+  .titleActions {
+    margin-top: 7.25rem;
+  }
+
   .polaroid {
     width: clamp(5.75rem, 28vw, 7.75rem);
   }

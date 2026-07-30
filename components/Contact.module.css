@@ -85,6 +85,14 @@
   filter: brightness(0.7) drop-shadow(0 0.35rem 0.7rem rgba(16, 24, 32, 0.16));
 }
 
+@media (max-width: 700px) {
+  .clickMe {
+    width: clamp(8.5rem, 38vw, 12rem) !important;
+    left: -110%;
+    top: 20%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .messageButton,
   .messageIcon {

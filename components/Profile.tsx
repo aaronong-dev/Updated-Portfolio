@@ -44,18 +44,18 @@ const STICKERS = [
 
 const GALLERY_IMAGES = [
   {
-    src: "/services/Brand-Design.JPG",
+    src: "/services/Brand-Design.jpg",
     label: "Brand & Visual Design",
     alt: "Brand & Visual Design",
   },
   {
-    src: "/services/Software-Development.JPG",
+    src: "/services/Software-Development.jpg",
     label: "Software Development",
     alt: "Software Development",
     objectPosition: "center 75%",
   },
   {
-    src: "/services/Web-Development.png",
+    src: "/services/Web-Development.jpg",
     label: "Web Development",
     alt: "Web Development",
   },
@@ -186,6 +186,11 @@ function GalleryStrip({
                 alt={image.alt}
                 width={image.logo ? 512 : 900}
                 height={image.logo ? 512 : 1200}
+                sizes={
+                  image.logo
+                    ? "(max-width: 700px) 28vw, 18vw"
+                    : "(max-width: 700px) 42vw, 36vw"
+                }
                 className={
                   image.logo
                     ? `${styles.galleryLogoImage}${
@@ -213,39 +218,39 @@ function GalleryStrip({
 
 const CLIENTS = [
   {
-    src: "/Client1.png",
+    src: "/Client1.jpg",
     alt: "Client project 1",
     href: "https://www.jkmedicalclinic.com/",
-    width: 2248,
-    height: 1220,
+    width: 1600,
+    height: 868,
   },
   {
-    src: "/Client2.png",
+    src: "/Client2.jpg",
     alt: "Client project 2",
     href: "https://www.medicosencasapllc.com/",
-    width: 2478,
-    height: 1292,
+    width: 1600,
+    height: 834,
   },
   {
-    src: "/Client3.png",
+    src: "/Client3.jpg",
     alt: "Client project 3",
     href: "https://www.haciendadelsolresort.com/",
-    width: 2628,
-    height: 1380,
+    width: 1600,
+    height: 840,
   },
   {
-    src: "/Client4.png",
+    src: "/Client4.jpg",
     alt: "All Med Home Care",
     href: "https://www.allmedhomecare.com/",
-    width: 2828,
-    height: 1386,
+    width: 1600,
+    height: 784,
   },
   {
-    src: "/Client5.png",
+    src: "/Client5.jpg",
     alt: "Southern Charm Vacation Home",
     href: "https://www.southerncharmspi.com/",
-    width: 2552,
-    height: 1458,
+    width: 1600,
+    height: 914,
   },
 ];
 
@@ -285,6 +290,7 @@ export default function Profile() {
       alt={activeClient.alt}
       width={activeClient.width}
       height={activeClient.height}
+      sizes="(max-width: 700px) 78vw, min(80vw, 44rem)"
       className={styles.monitorScreenImage}
       draggable={false}
       priority={activeIndex === 0}

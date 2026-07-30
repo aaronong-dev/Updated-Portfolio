@@ -56,6 +56,8 @@ const EDGE_PADDING = 12;
 const MIN_VISIBLE = 48;
 const SIDE_ZONE = 140;
 const DEFAULT_EDGE: DockEdge = "left";
+const MOBILE_DEFAULT_EDGE: DockEdge = "top";
+const MOBILE_BREAKPOINT = 720;
 
 type DragState = {
   pointerId: number;
@@ -124,6 +126,13 @@ function getNearestEdge(pointX: number, pointY: number): DockEdge {
   )[0];
 }
 
+function getDefaultEdge(): DockEdge {
+  if (typeof window !== "undefined" && window.innerWidth <= MOBILE_BREAKPOINT) {
+    return MOBILE_DEFAULT_EDGE;
+  }
+  return DEFAULT_EDGE;
+}
+
 function readStoredEdge(): DockEdge {
   try {
     const saved = window.localStorage.getItem(STORAGE_KEY);
@@ -134,7 +143,7 @@ function readStoredEdge(): DockEdge {
     // Ignore storage access errors.
   }
 
-  return DEFAULT_EDGE;
+  return getDefaultEdge();
 }
 
 function subscribeToEdge(onStoreChange: () => void) {

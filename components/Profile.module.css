@@ -298,7 +298,9 @@
   --gallery-base-offset: calc(var(--gallery-side-peek) - var(--gallery-slide));
 
   position: relative;
-  flex: 0 0 100%;
+  flex: 0 0 auto;
+  align-self: stretch;
+  width: 100%;
   z-index: 1;
   height: min(48svh, 32rem);
   margin-top: clamp(1.5rem, 4vw, 3rem);
@@ -311,7 +313,9 @@
 
 .gallerySecondaryWrap {
   position: relative;
-  flex: 0 0 100%;
+  flex: 0 0 auto;
+  align-self: stretch;
+  width: 100%;
   z-index: 2;
   margin-top: calc(-1 * clamp(1.5rem, 4vw, 4rem));
   margin-bottom: calc(-1 * clamp(1.5rem, 4vw, 4rem));
@@ -481,7 +485,9 @@
 
 .clients {
   position: relative;
-  flex: 0 0 100%;
+  flex: 0 0 auto;
+  align-self: stretch;
+  width: 100%;
   z-index: 1;
   display: flex;
   flex-direction: column;
