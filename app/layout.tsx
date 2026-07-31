@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, Syne, Geist } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import AppChrome from "@/components/AppChrome";
 import { MessageModalProvider } from "@/components/message-modal";
 import "./globals.css";
@@ -39,6 +40,7 @@ export default function RootLayout({
         <MessageModalProvider>
           <AppChrome>{children}</AppChrome>
         </MessageModalProvider>
+        <Analytics />
       </body>
     </html>
   );
