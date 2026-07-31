@@ -83,7 +83,7 @@ const SECONDARY_GALLERY_IMAGES = [
       "linear-gradient(160deg, #f7df1e 0%, #e8c217 42%, #c9a00c 100%)",
   },
   {
-    src: "/languages/Python-Logo.webp",
+    src: "/languages/python-logo.webp",
     label: "Python",
     alt: "Python",
     logo: true,
