@@ -23,35 +23,36 @@ const POLAROIDS = [
     id: "one",
     className: "polaroidOne",
     label: "Polaroid 1",
-    type: "image",
+    type: "image" as const,
     src: "/polaroids/Polaroid-1.jpg",
   },
   {
     id: "two",
     className: "polaroidTwo",
     label: "Polaroid 2",
-    type: "image",
+    type: "image" as const,
     src: "/polaroids/Polaroid-2.JPG",
   },
   {
     id: "three",
     className: "polaroidThree",
     label: "Polaroid 3",
-    type: "video",
-    src: "/polaroids/polaroid-video/polaroid-video.MOV",
+    type: "video" as const,
+    src: "/polaroids/polaroid-video/polaroid-video.mp4",
+    poster: "/polaroids/polaroid-video/polaroid-video-poster.jpg",
   },
   {
     id: "four",
     className: "polaroidFour",
     label: "Polaroid 4",
-    type: "image",
+    type: "image" as const,
     src: "/polaroids/Polaroid-3.JPG",
   },
   {
     id: "five",
     className: "polaroidFive",
     label: "Polaroid 5",
-    type: "image",
+    type: "image" as const,
     src: "/polaroids/Polaroid-4.JPG",
   },
 ] as const;
@@ -113,6 +114,7 @@ export default function Hero() {
   const bannerNodeRef = useRef<HTMLDivElement | null>(null);
   const bannerPositionRef = useRef({ x: 0, y: 0, rot: 0 });
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const videoHoverOnlyRef = useRef(true);
   const zCounterRef = useRef(5);
   const rafRef = useRef<number | null>(null);
   const [isPanning, setIsPanning] = useState(false);
@@ -212,6 +214,26 @@ export default function Hero() {
   };
 
   useEffect(() => () => stopInertia(), []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Touch / coarse pointers have no reliable hover — autoplay muted loop instead.
+    const hoverMedia = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const syncPlaybackMode = () => {
+      videoHoverOnlyRef.current = hoverMedia.matches;
+      if (hoverMedia.matches) {
+        video.pause();
+        return;
+      }
+      void video.play().catch(() => {});
+    };
+
+    syncPlaybackMode();
+    hoverMedia.addEventListener("change", syncPlaybackMode);
+    return () => hoverMedia.removeEventListener("change", syncPlaybackMode);
+  }, []);
 
   const onCanvasPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
     if (event.button !== 0) return;
@@ -401,12 +423,14 @@ export default function Hero() {
   };
 
   const playPolaroidVideo = () => {
+    if (!videoHoverOnlyRef.current) return;
     const video = videoRef.current;
     if (!video) return;
     void video.play().catch(() => {});
   };
 
   const pausePolaroidVideo = () => {
+    if (!videoHoverOnlyRef.current) return;
     const video = videoRef.current;
     if (!video) return;
     video.pause();
@@ -479,10 +503,11 @@ export default function Hero() {
                           ref={videoRef}
                           className={styles.polaroidMedia}
                           src={polaroid.src}
+                          poster={polaroid.poster}
                           muted
                           loop
                           playsInline
-                          preload="metadata"
+                          preload="auto"
                           aria-hidden="true"
                         />
                       ) : (
