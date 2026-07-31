@@ -1,7 +1,7 @@
-import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import HashScroll from "@/components/HashScroll";
+import { Contact } from "@/components/message-modal";
 import Profile from "@/components/Profile";
 import Projects from "@/components/Projects";
 

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, Syne, Geist } from "next/font/google";
-import Dock from "@/components/Dock";
-import MessageModal from "@/components/MessageModal";
-import { MessageModalProvider } from "@/components/MessageModalProvider";
+import AppChrome from "@/components/AppChrome";
+import { MessageModalProvider } from "@/components/message-modal";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -38,9 +37,7 @@ export default function RootLayout({
     >
       <body>
         <MessageModalProvider>
-          <Dock />
-          {children}
-          <MessageModal />
+          <AppChrome>{children}</AppChrome>
         </MessageModalProvider>
       </body>
     </html>

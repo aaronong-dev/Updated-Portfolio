@@ -1,38 +1,62 @@
-# Updated-Portfolio
-Welcome to my portfolio!
+# Aaron Ong — Portfolio
 
+Personal portfolio site built with Next.js.
 
-## Getting Started
-
-First, run the development server:
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Contact form (optional)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The contact modal sends mail through [Resend](https://resend.com). Create a `.env.local` file in the project root:
 
-## Learn More
+```bash
+RESEND_API_KEY=         # from https://resend.com/api-keys
+CONTACT_TO_EMAIL=       # inbox that receives messages
+CONTACT_FROM_EMAIL=     # verified Resend sender, e.g. Portfolio <onboarding@resend.dev>
+```
 
-To learn more about Next.js, take a look at the following resources:
+Without these, the rest of the site still runs; only message sending needs them.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```text
+app/                 # routes, layout, API, fonts
+components/
+  dock/              # reusable dock — see components/dock/README.md
+  message-modal/     # reusable contact modal — see components/message-modal/README.md
+  …                  # page sections (Hero, Profile, Projects, …)
+lib/                 # shared utilities (includes contact rate-limit)
+public/              # static assets, grouped by section
+  brand/             # signature / brand marks
+  bowling-tournaments/
+  collage-stickers/
+  contact/           # message modal + Contact CTA assets
+  dock/              # dock icons
+  hero/
+  languages/
+  polaroids/
+  profile/           # portrait, desk setup, clients, audio
+  projects/
+  services/
+```
 
-## Deploy on Vercel
+To reuse the dock or message modal in another project, copy the matching `components/…` folder and follow its README (assets + companion files listed there).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Command         | Description              |
+| --------------- | ------------------------ |
+| `npm run dev`   | Start the dev server     |
+| `npm run build` | Production build         |
+| `npm run start` | Serve the production build |
+| `npm run lint`  | Run ESLint               |
+
+## Deploy
+
+Deploy on [Vercel](https://vercel.com/new) and set the same env vars in the project settings if you want the contact form live.

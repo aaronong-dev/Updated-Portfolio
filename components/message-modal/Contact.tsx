@@ -14,7 +14,7 @@ export default function Contact() {
       </h2>
       <div className={styles.messageTarget}>
         <Image
-          src="/Click Me-transparent.png"
+          src="/contact/click-me-transparent.png"
           alt=""
           width={500}
           height={500}
@@ -30,7 +30,7 @@ export default function Contact() {
           onClick={openMessageModal}
         >
           <Image
-            src="/Message-Icon.png"
+            src="/contact/Message-Icon.png"
             alt=""
             width={256}
             height={256}

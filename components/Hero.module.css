@@ -27,7 +27,7 @@
   pointer-events: none;
   opacity: 0.22;
   mix-blend-mode: soft-light;
-  background-image: url("/Hero-Overlay.jpg");
+  background-image: url("/hero/Hero-Overlay.jpg");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   background-position: center;

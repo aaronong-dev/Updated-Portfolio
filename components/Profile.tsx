@@ -218,35 +218,35 @@ function GalleryStrip({
 
 const CLIENTS = [
   {
-    src: "/Client1.jpg",
+    src: "/profile/clients/Client1.jpg",
     alt: "Client project 1",
     href: "https://www.jkmedicalclinic.com/",
     width: 1600,
     height: 868,
   },
   {
-    src: "/Client2.jpg",
+    src: "/profile/clients/Client2.jpg",
     alt: "Client project 2",
     href: "https://www.medicosencasapllc.com/",
     width: 1600,
     height: 834,
   },
   {
-    src: "/Client3.jpg",
+    src: "/profile/clients/Client3.jpg",
     alt: "Client project 3",
     href: "https://www.haciendadelsolresort.com/",
     width: 1600,
     height: 840,
   },
   {
-    src: "/Client4.jpg",
+    src: "/profile/clients/Client4.jpg",
     alt: "All Med Home Care",
     href: "https://www.allmedhomecare.com/",
     width: 1600,
     height: 784,
   },
   {
-    src: "/Client5.jpg",
+    src: "/profile/clients/Client5.jpg",
     alt: "Southern Charm Vacation Home",
     href: "https://www.southerncharmspi.com/",
     width: 1600,
@@ -389,7 +389,7 @@ export default function Profile() {
 
   function playClickSound() {
     if (!clickSoundRef.current) {
-      clickSoundRef.current = new Audio("/Keyboard-Click.mp3");
+      clickSoundRef.current = new Audio("/profile/Keyboard-Click.mp3");
     }
     const sound = clickSoundRef.current;
     sound.currentTime = 0;
@@ -461,7 +461,7 @@ export default function Profile() {
 
         <div className={styles.portrait}>
           <Image
-            src="/Cut-Out-Me.png"
+            src="/profile/Cut-Out-Me.png"
             alt="Aaron Ong"
             width={1537}
             height={1023}
@@ -498,7 +498,7 @@ export default function Profile() {
                 <video
                   ref={previewVideoRef}
                   className={styles.linkPreviewImage}
-                  src="/Graduation-Clip.MOV"
+                  src="/profile/Graduation-Clip.MOV"
                   muted
                   loop
                   playsInline
@@ -613,7 +613,7 @@ export default function Profile() {
                 )}
               </div>
               <Image
-                src="/Apple-Monitor.png"
+                src="/profile/Apple-Monitor.png"
                 alt=""
                 width={1433}
                 height={1098}
@@ -636,7 +636,7 @@ export default function Profile() {
           </div>
 
           <Image
-            src="/White-Keyboard.png"
+            src="/profile/White-Keyboard.png"
             alt=""
             width={1353}
             height={523}

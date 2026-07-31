@@ -43,7 +43,7 @@ const PROJECTS: Project[] = [
     languages: [],
     description: "Coming soon.",
     theme: "dark",
-    art: "/WIP-Laptop.png",
+    art: "/projects/WIP-Laptop.png",
   },
 ];
 

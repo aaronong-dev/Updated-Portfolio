@@ -11,42 +11,45 @@ import {
   type CSSProperties,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import { useMessageModal } from "./MessageModalProvider";
 import styles from "./Dock.module.css";
 
 const DOCK_ITEMS = [
   {
     label: "Home",
-    src: "/docker-icons/Home-Button.png",
+    src: "/dock/Home-Button.png",
     href: "/#home",
   },
   {
     label: "Profile",
-    src: "/docker-icons/Profile-Icon.png",
+    src: "/dock/Profile-Icon.png",
     href: "/#profile",
   },
   {
     label: "Projects",
-    src: "/docker-icons/Folder-Icon.png",
+    src: "/dock/Folder-Icon.png",
     href: "/#projects",
   },
   {
     label: "LinkedIn",
-    src: "/docker-icons/Linked-In-Icon.png",
+    src: "/dock/Linked-In-Icon.png",
     href: "https://www.linkedin.com/in/aaron-ong-77b642158/",
     external: true,
   },
   {
     label: "GitHub",
-    src: "/docker-icons/GitHub-Logo.png",
+    src: "/dock/GitHub-Logo.png",
     href: "https://github.com/aaronong-dev",
     external: true,
   },
   {
     label: "Messages",
-    src: "/Message-Icon.png",
+    src: "/dock/Message-Icon.png",
   },
 ] as const;
+
+type DockProps = {
+  onMessagesClick?: () => void;
+};
 
 type DockEdge = "top" | "bottom" | "left" | "right";
 
@@ -187,8 +190,7 @@ function persistEdge(nextEdge: DockEdge) {
   window.dispatchEvent(new Event(EDGE_CHANGE_EVENT));
 }
 
-export default function Dock() {
-  const { openMessageModal } = useMessageModal();
+export default function Dock({ onMessagesClick }: DockProps) {
   const dockRef = useRef<HTMLElement>(null);
   const dragRef = useRef<DragState | null>(null);
   const snapSnapshotRef = useRef<SnapSnapshot | null>(null);
@@ -573,7 +575,9 @@ export default function Dock() {
                   type="button"
                   className={styles.button}
                   aria-label={item.label}
-                  onClick={item.label === "Messages" ? openMessageModal : undefined}
+                  onClick={
+                    item.label === "Messages" ? onMessagesClick : undefined
+                  }
                 >
                   {content}
                 </button>

@@ -31,7 +31,7 @@ export default function Footer() {
       <div className={styles.inner}>
         <div className={styles.brand}>
           <Image
-            src="/Name-Signature.png"
+            src="/brand/Name-Signature.png"
             alt="Aaron Ong"
             width={1774}
             height={887}

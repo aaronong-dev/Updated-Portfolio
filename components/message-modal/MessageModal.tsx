@@ -637,7 +637,7 @@ export default function MessageModal() {
 
             <button type="button" className={styles.conversation} aria-current="true">
               <Image
-                src="/Personal-Profile.png"
+                src="/contact/Personal-Profile.png"
                 alt=""
                 width={96}
                 height={96}
@@ -663,7 +663,7 @@ export default function MessageModal() {
           >
             <div className={styles.toPane}>
               <Image
-                src="/Personal-Profile.png"
+                src="/contact/Personal-Profile.png"
                 alt=""
                 width={96}
                 height={96}

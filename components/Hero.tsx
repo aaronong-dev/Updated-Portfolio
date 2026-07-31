@@ -24,35 +24,35 @@ const POLAROIDS = [
     className: "polaroidOne",
     label: "Polaroid 1",
     type: "image",
-    src: "/polaroid-pictures/Polaroid-1.jpg",
+    src: "/polaroids/Polaroid-1.jpg",
   },
   {
     id: "two",
     className: "polaroidTwo",
     label: "Polaroid 2",
     type: "image",
-    src: "/polaroid-pictures/Polaroid-2.JPG",
+    src: "/polaroids/Polaroid-2.JPG",
   },
   {
     id: "three",
     className: "polaroidThree",
     label: "Polaroid 3",
     type: "video",
-    src: "/polaroid-pictures/polaroid-video/polaroid-video.MOV",
+    src: "/polaroids/polaroid-video/polaroid-video.MOV",
   },
   {
     id: "four",
     className: "polaroidFour",
     label: "Polaroid 4",
     type: "image",
-    src: "/polaroid-pictures/Polraoid-3.JPG",
+    src: "/polaroids/Polaroid-3.JPG",
   },
   {
     id: "five",
     className: "polaroidFive",
     label: "Polaroid 5",
     type: "image",
-    src: "/polaroid-pictures/Polaroid-4.JPG",
+    src: "/polaroids/Polaroid-4.JPG",
   },
 ] as const;
 
@@ -513,7 +513,7 @@ export default function Hero() {
             >
               <Image
                 className={styles.roleImage}
-                src="/Hero-Banner.png"
+                src="/hero/Hero-Banner.png"
                 alt="Software Developer / Digital Creative"
                 width={2159}
                 height={728}
@@ -529,7 +529,7 @@ export default function Hero() {
               >
                 <Image
                   className={styles.titleButtonImage}
-                  src="/profile-button.png"
+                  src="/hero/profile-button.png"
                   alt="Profile"
                   width={200}
                   height={200}
@@ -543,7 +543,7 @@ export default function Hero() {
               >
                 <Image
                   className={styles.titleButtonImage}
-                  src="/projects-button.png"
+                  src="/hero/projects-button.png"
                   alt="Projects"
                   width={200}
                   height={200}
