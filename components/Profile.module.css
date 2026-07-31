@@ -278,6 +278,11 @@
   letter-spacing: 0.01em;
 }
 
+.linkPreviewWrap.linkPreviewOpen .linkPreview {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
 @media (hover: hover) and (pointer: fine) {
   .linkPreviewWrap:hover .linkPreview,
   .linkPreviewWrap:focus-within .linkPreview {
@@ -816,6 +821,20 @@
   filter: drop-shadow(0 1rem 2rem rgba(16, 24, 32, 0.18));
 }
 
+.collagePopped .sticker {
+  transform:
+    translate(-50%, -50%)
+    translate(var(--pop-x), var(--pop-y))
+    rotate(var(--pop-rot))
+    scale(var(--pop-scale));
+  filter: drop-shadow(0 0.85rem 1.35rem rgba(16, 24, 32, 0.2));
+}
+
+.collagePopped .portraitImage {
+  transform: translateY(-0.55rem) scale(1.025);
+  filter: drop-shadow(0 0.85rem 1.45rem rgba(16, 24, 32, 0.2));
+}
+
 @media (hover: hover) and (pointer: fine) {
   .collage:hover .sticker,
   .collage:focus-within .sticker {
@@ -835,6 +854,17 @@
 }
 
 @media (hover: none), (pointer: coarse) {
+  .linkPreviewWrap.linkPreviewOpen .linkPreview {
+    position: fixed;
+    top: var(--link-preview-top, 0px);
+    bottom: auto;
+    left: 50%;
+    width: min(18.5rem, calc(100vw - 2rem));
+    transform: translate(-50%, calc(-100% - 0.65rem)) scale(1);
+    transform-origin: bottom center;
+    z-index: 40;
+  }
+
   .stickerUltrawide {
     --sticker-x: -34%;
     --sticker-y: -36%;
@@ -937,7 +967,7 @@
   .clients {
     margin-top: 0;
     padding-top: clamp(4rem, 9vw, 5.25rem);
-    padding-bottom: 0;
+    padding-bottom: clamp(2.5rem, 7vw, 4rem);
   }
 
   .deskSetup {
@@ -955,5 +985,6 @@
 
   .keyboardImage {
     width: min(54.6vw, 21.6rem);
+    margin-top: -1.25rem;
   }
 }

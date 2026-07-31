@@ -504,6 +504,78 @@ export default function MessageModal() {
       }
     : undefined;
 
+  const renderTrafficLights = () => (
+    <div className={styles.trafficLights}>
+      <button
+        type="button"
+        className={`${styles.traffic} ${styles.trafficClose}`}
+        onClick={handleClose}
+        aria-label="Close messages"
+        title="Close"
+      >
+        <svg viewBox="0 0 12 12" className={styles.trafficIcon} aria-hidden="true" focusable="false">
+          <path
+            d="M3.2 3.2l5.6 5.6M8.8 3.2l-5.6 5.6"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        </svg>
+      </button>
+      <button
+        type="button"
+        className={`${styles.traffic} ${styles.trafficMinimize}`}
+        onClick={handleMinimize}
+        aria-label="Minimize messages"
+        title="Minimize"
+        disabled={isMinimizing}
+      >
+        <svg viewBox="0 0 12 12" className={styles.trafficIcon} aria-hidden="true" focusable="false">
+          <path
+            d="M2.5 6h7"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        </svg>
+      </button>
+      <button
+        type="button"
+        className={`${styles.traffic} ${styles.trafficZoom}`}
+        onClick={handleExpand}
+        aria-label={isExpanded ? "Exit full screen" : "Enter full screen"}
+        title={isExpanded ? "Exit Full Screen" : "Full Screen"}
+        disabled={isMinimizing}
+      >
+        {isExpanded ? (
+          <svg viewBox="0 0 12 12" className={styles.trafficIcon} aria-hidden="true" focusable="false">
+            <path
+              d="M7.2 2.8H9.2V4.8M4.8 9.2H2.8V7.2M9.2 2.8 6.8 5.2M2.8 9.2l2.4-2.4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        ) : (
+          <svg viewBox="0 0 12 12" className={styles.trafficIcon} aria-hidden="true" focusable="false">
+            <path
+              d="M4.2 7.8H2.8V6.4M7.8 4.2h1.4V5.6M2.8 7.8l2.2-2.2M9.2 4.2 7 6.4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
+      </button>
+    </div>
+  );
+
   return (
     <div
       ref={backdropRef}
@@ -539,75 +611,7 @@ export default function MessageModal() {
               className={`${styles.sidebarTop} ${styles.dragRegion}`}
               onPointerDown={beginMove}
             >
-              <div className={styles.trafficLights}>
-                <button
-                  type="button"
-                  className={`${styles.traffic} ${styles.trafficClose}`}
-                  onClick={handleClose}
-                  aria-label="Close messages"
-                  title="Close"
-                >
-                  <svg viewBox="0 0 12 12" className={styles.trafficIcon} aria-hidden="true" focusable="false">
-                    <path
-                      d="M3.2 3.2l5.6 5.6M8.8 3.2l-5.6 5.6"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.4"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  className={`${styles.traffic} ${styles.trafficMinimize}`}
-                  onClick={handleMinimize}
-                  aria-label="Minimize messages"
-                  title="Minimize"
-                  disabled={isMinimizing}
-                >
-                  <svg viewBox="0 0 12 12" className={styles.trafficIcon} aria-hidden="true" focusable="false">
-                    <path
-                      d="M2.5 6h7"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.4"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  className={`${styles.traffic} ${styles.trafficZoom}`}
-                  onClick={handleExpand}
-                  aria-label={isExpanded ? "Exit full screen" : "Enter full screen"}
-                  title={isExpanded ? "Exit Full Screen" : "Full Screen"}
-                  disabled={isMinimizing}
-                >
-                  {isExpanded ? (
-                    <svg viewBox="0 0 12 12" className={styles.trafficIcon} aria-hidden="true" focusable="false">
-                      <path
-                        d="M7.2 2.8H9.2V4.8M4.8 9.2H2.8V7.2M9.2 2.8 6.8 5.2M2.8 9.2l2.4-2.4"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  ) : (
-                    <svg viewBox="0 0 12 12" className={styles.trafficIcon} aria-hidden="true" focusable="false">
-                      <path
-                        d="M4.2 7.8H2.8V6.4M7.8 4.2h1.4V5.6M2.8 7.8l2.2-2.2M9.2 4.2 7 6.4"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  )}
-                </button>
-              </div>
+              {renderTrafficLights()}
               <span className={styles.sidebarMenu} aria-hidden="true">
                 <svg viewBox="0 0 16 16" focusable="false">
                   <path
@@ -662,6 +666,7 @@ export default function MessageModal() {
             onPointerDown={beginMove}
           >
             <div className={styles.toPane}>
+              <div className={styles.headerTrafficLights}>{renderTrafficLights()}</div>
               <Image
                 src="/contact/Personal-Profile.png"
                 alt=""
@@ -671,22 +676,6 @@ export default function MessageModal() {
                 draggable={false}
               />
               <span className={styles.chatName}>Aaron</span>
-              <button
-                type="button"
-                className={styles.headerClose}
-                onClick={handleClose}
-                aria-label="Close messages"
-              >
-                <svg viewBox="0 0 14 14" aria-hidden="true" focusable="false">
-                  <path
-                    d="M2 2l10 10M12 2 2 12"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </button>
             </div>
           </header>
 

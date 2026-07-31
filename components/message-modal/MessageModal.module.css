@@ -410,38 +410,8 @@
   line-height: 1.2;
 }
 
-.headerClose {
-  appearance: none;
-  position: absolute;
-  top: 0.55rem;
-  right: 0.55rem;
+.headerTrafficLights {
   display: none;
-  align-items: center;
-  justify-content: center;
-  width: 1.75rem;
-  height: 1.75rem;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.65);
-  cursor: pointer;
-}
-
-.headerClose svg {
-  width: 0.75rem;
-  height: 0.75rem;
-}
-
-.headerClose:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.14);
-}
-
-.headerClose:focus-visible {
-  outline: 2px solid #0a84ff;
-  outline-offset: 2px;
 }
 
 .thread {
@@ -704,8 +674,27 @@
     display: none;
   }
 
-  .headerClose {
-    display: inline-flex;
+  .headerTrafficLights {
+    position: absolute;
+    top: 0.35rem;
+    left: 0.55rem;
+    display: block;
+    z-index: 1;
+  }
+
+  .headerTrafficLights .trafficLights {
+    gap: 0.55rem;
+  }
+
+  .headerTrafficLights .traffic {
+    width: 0.85rem;
+    height: 0.85rem;
+  }
+
+  .headerTrafficLights .trafficIcon {
+    width: 0.55rem;
+    height: 0.55rem;
+    opacity: 1;
   }
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, type CSSProperties, type TransitionEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent, type TransitionEvent } from "react";
 import styles from "./Profile.module.css";
 
 const STICKERS = [
@@ -268,6 +268,8 @@ const ALL_CLIENTS = [
 export default function Profile() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [clientsModalOpen, setClientsModalOpen] = useState(false);
+  const [collagePopped, setCollagePopped] = useState(false);
+  const collageRef = useRef<HTMLDivElement>(null);
   const galleryCount = GALLERY_IMAGES.length;
   const secondaryGalleryCount = SECONDARY_GALLERY_IMAGES.length;
   const [galleryIndex, setGalleryIndex] = useState<number>(galleryCount);
@@ -278,8 +280,10 @@ export default function Profile() {
   const [secondaryGalleryAnimate, setSecondaryGalleryAnimate] = useState(true);
   const [primaryGalleryPaused, setPrimaryGalleryPaused] = useState(false);
   const [secondaryGalleryPaused, setSecondaryGalleryPaused] = useState(false);
+  const [linkPreviewOpen, setLinkPreviewOpen] = useState(false);
   const clickSoundRef = useRef<HTMLAudioElement | null>(null);
   const previewVideoRef = useRef<HTMLVideoElement | null>(null);
+  const linkPreviewWrapRef = useRef<HTMLSpanElement | null>(null);
   const galleryPausedRef = useRef(false);
   const activeClient = CLIENTS[activeIndex];
   galleryPausedRef.current = primaryGalleryPaused || secondaryGalleryPaused;
@@ -422,6 +426,69 @@ export default function Profile() {
     video.currentTime = 0;
   }
 
+  function isCoarsePointer() {
+    return window.matchMedia("(hover: none), (pointer: coarse)").matches;
+  }
+
+  function positionMobilePreview() {
+    const wrap = linkPreviewWrapRef.current;
+    if (!wrap) return;
+    const rect = wrap.getBoundingClientRect();
+    wrap.style.setProperty("--link-preview-top", `${rect.top}px`);
+  }
+
+  function handlePreviewLeave() {
+    if (linkPreviewOpen) return;
+    pausePreviewVideo();
+  }
+
+  function handleUniLinkClick(
+    event: MouseEvent<HTMLAnchorElement>,
+  ) {
+    if (!isCoarsePointer()) return;
+    if (!linkPreviewOpen) {
+      event.preventDefault();
+      positionMobilePreview();
+      setLinkPreviewOpen(true);
+      playPreviewVideo();
+      return;
+    }
+    setLinkPreviewOpen(false);
+    pausePreviewVideo();
+  }
+
+  useEffect(() => {
+    if (!linkPreviewOpen) return;
+
+    function onPointerDown(event: PointerEvent) {
+      const wrap = linkPreviewWrapRef.current;
+      if (!wrap || wrap.contains(event.target as Node)) return;
+      setLinkPreviewOpen(false);
+      pausePreviewVideo();
+    }
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      setLinkPreviewOpen(false);
+      pausePreviewVideo();
+    }
+
+    function onReposition() {
+      positionMobilePreview();
+    }
+
+    document.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("scroll", onReposition, true);
+    window.addEventListener("resize", onReposition);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("scroll", onReposition, true);
+      window.removeEventListener("resize", onReposition);
+    };
+  }, [linkPreviewOpen]);
+
   useEffect(() => {
     if (!clientsModalOpen) return;
 
@@ -441,9 +508,30 @@ export default function Profile() {
     };
   }, [clientsModalOpen]);
 
+  useEffect(() => {
+    const collage = collageRef.current;
+    if (!collage) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setCollagePopped(entry.isIntersecting);
+      },
+      {
+        threshold: 0.4,
+        rootMargin: "0px 0px -12% 0px",
+      },
+    );
+
+    observer.observe(collage);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section className={styles.profile} id="profile" aria-label="Profile">
-      <div className={styles.collage}>
+      <div
+        ref={collageRef}
+        className={`${styles.collage}${collagePopped ? ` ${styles.collagePopped}` : ""}`}
+      >
         <ul className={styles.stickers} aria-hidden="true">
           {STICKERS.map((sticker) => (
             <li key={sticker.src} className={`${styles.sticker} ${sticker.className}`}>
@@ -479,17 +567,19 @@ export default function Profile() {
           I&apos;m a South Texas-based software developer and recent graduate
           from{" "}
           <span
-            className={styles.linkPreviewWrap}
+            ref={linkPreviewWrapRef}
+            className={`${styles.linkPreviewWrap}${linkPreviewOpen ? ` ${styles.linkPreviewOpen}` : ""}`}
             onPointerEnter={playPreviewVideo}
-            onPointerLeave={pausePreviewVideo}
+            onPointerLeave={handlePreviewLeave}
             onFocus={playPreviewVideo}
-            onBlur={pausePreviewVideo}
+            onBlur={handlePreviewLeave}
           >
             <a
               href="https://www.utrgv.edu/"
               target="_blank"
               rel="noopener noreferrer"
               className={styles.uniLink}
+              onClick={handleUniLinkClick}
             >
               The University of Texas Rio Grande Valley
             </a>
